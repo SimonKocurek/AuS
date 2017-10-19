@@ -4,8 +4,11 @@ from person import Person
 class Dwelling:
     """Class holding data about a one room"""
 
-    def __init__(self, block: str, floor: int, cell: int, room: str, space: int):
+    def __init__(self, block: str, floor: int, cell: int, room: str, space: int, people=None):
         """Basic constructor"""
+
+        if people is None:
+            people = []
 
         if len(block) != 1:
             raise ValueError(f'Block shoul be one letter, but got {block}')
@@ -18,7 +21,7 @@ class Dwelling:
         self._cell = cell
         self._room = room
         self._space = space
-        self._people = []
+        self._people = people
 
     def add_person(self, person: Person) -> None:
         """
@@ -82,6 +85,36 @@ class Dwelling:
     def people(self) -> [Person]:
         """Get people living in the dwelling"""
         return self._people
+
+    def to_json(self) -> dict:
+        """
+        :return: Dwelling as a JSON object
+        """
+        return {
+            'block': self.block,
+            'floor': self.floor,
+            'cell': self.cell,
+            'room': self.room,
+            'space': self.space,
+            'people': list(map(lambda person: person.to_json(), self._people))
+        }
+
+    @staticmethod
+    def from_json(json: dict):
+        """
+        :return: Dwelling object created from json
+        """
+        if json['people'] is None:
+            json['people'] = []
+
+        return Dwelling(
+            json['block'],
+            json['floor'],
+            json['cell'],
+            json['room'],
+            json['space'],
+            map(lambda person: Person.from_json(person), json['people'])
+        )
 
     def __gt__(self, other) -> bool:
         """Dwelling is sooner in alphabetical sorting"""

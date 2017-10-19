@@ -4,7 +4,15 @@ from datetime import datetime
 class Person:
     """Class holdin data about a single accommodated person"""
 
-    def __init__(self, name: str, code: str, date_of_birth: datetime, birthplace: str, workspace: str):
+    def __init__(
+            self,
+            name: str,
+            code: str,
+            gender: str,
+            date_of_birth: datetime,
+            birthplace: str,
+            workspace: str,
+            date_added=datetime.now()):
         """Basic constructor"""
         if name is None or len(name) == 0:
             raise ValueError(f'Person must have a name, but got {name}')
@@ -12,21 +20,47 @@ class Person:
         if code is None or len(code) == 0:
             raise ValueError(f'Person must have a code, but got {code}')
 
+        if gender is None or len(gender) != 1:
+            raise ValueError(f'Person must have a one letter gender [m, f], but got {gender}')
+
         self.name = name
-        self._code = code
+        self.code = code
+        self.gender = gender
         self.workspace = workspace
         self.date_of_birth = date_of_birth
         self.birthplace = birthplace
-        self.date_added = datetime.now()
+        self.date_added = date_added
 
     def refresh_added_date(self) -> None:
         """Reset the date the user was added to the current one"""
         self.date_added = datetime.now()
 
-    @property
-    def code(self) -> str:
-        """Get unique code of the person"""
-        return self._code
+    def to_json(self) -> dict:
+        """
+        :return: Person as JSON object
+        """
+        return {
+            'name': self.name,
+            'code': self.code,
+            'gender': self.gender,
+            'date_of_birth': self.date_of_birth,
+            'birthplace': self.birthplace,
+            'workspace': self.workspace
+        }
+
+    @staticmethod
+    def from_json(json: dict):
+        """
+        :return: Person object created from json
+        """
+        return Person(
+            json['name'],
+            json['code'],
+            json['gender'],
+            json['date_of_birth'],
+            json['birthplace'],
+            json['workspace']
+        )
 
     def __ge__(self, other) -> bool:
         """Person is sooner in alphabetical sorting of names"""
@@ -38,6 +72,7 @@ class Person:
         return type(self) == type(other) and \
                self.code == other.code and \
                self.name == other.name and \
+               self.gender == other.gender and \
                self.date_of_birth == other.date_of_birth
 
     def __hash__(self) -> int:
@@ -45,8 +80,10 @@ class Person:
         return hash(self.code)
 
     def __str__(self) -> str:
+        """Person details"""
         return f'Name: {self.name}, ' \
-               f'Code: {self._code}, ' \
+               f'Code: {self.code}, ' \
+               f'Gender: {self.gender}, ' \
                f'Workspace: {self.workspace}, ' \
                f'Date Of Birth: {self.date_of_birth}, ' \
                f'Birthplace: {self.birthplace}, ' \

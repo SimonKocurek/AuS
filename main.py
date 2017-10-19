@@ -1,22 +1,40 @@
-import atexit
-import json
+import atexit # Exit program callback
+import json # Serialize object <-> json
 
 from building import Building
 from gui import Gui
 
+DATA_FILE = 'data.json'
+buildings = []
 
-def main() -> None:
-    buildings = []
 
-    medicka4 = Building('medicka', 4)
-    buildings.append(medicka4)
-    gui = Gui()
-    atexit.register(exit_handler)
+def load_file(filename: str, buildings: list) -> None:
+    """ Loads file into a buildings variable """
+    content = ''
+    with open(filename, 'r') as file:
+        content += file.readline()
+
+    buildings[:] = []
+    buildings.extend([Building.from_json(building) for building in json.loads(content)])
 
 
 def exit_handler():
-    list = [1, 2, (3, 4)]  # Note that the 3rd element is a tuple (3, 4)
-    print(json.dumps(list))
+    """ Executes at program shutdown"""
+    write_file(DATA_FILE)
+
+
+def write_file(filename: str) -> None:
+    """ Writes buildings list as a json into a file """
+    serialized = [building.to_json() for building in buildings]
+    with open(filename, 'w') as file:
+        file.write(json.dumps(serialized))
+
+
+def main() -> None:
+    load_file(DATA_FILE, buildings)
+
+    gui = Gui(buildings)
+    atexit.register(exit_handler)
 
 
 if __name__ == '__main__':
