@@ -1,13 +1,7 @@
 import unittest
-from datetime import datetime
-
-from dwelling import Dwelling
-from person import Person
-
-from src.building import Building
 
 
-class SerializationTest(unittest.TestCase):
+class Building(unittest.TestCase):
 
     def test_person_serialization(self):
         person = Person('Jožko', '14aq34e21g90vha', 'm', datetime.now(), 'Košice', 'CAI')

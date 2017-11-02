@@ -4,7 +4,7 @@ from tkinter import filedialog
 import xmltodict as xmltodict
 from dict2xml import dict2xml  # dict -> xml
 
-from building import Building
+from src.building import Building
 
 
 class Gui:
@@ -44,7 +44,7 @@ class Gui:
         pass
 
     def file_open(self) -> None:
-        """ Replaces buildings file with xml file content """
+        """ Replaces buildings with xml file content """
         filename = filedialog.askopenfilename(
             initialdir='./',
             title='Výber súbor na otvorenie',
@@ -59,18 +59,15 @@ class Gui:
             root_element = dict(xml['buildings'])
             building_list = [dict(building) for building in root_element['building']]
 
-        print(self._buildings)
-
         # clear all previously loaded buildings
         self._buildings[:] = []
         self._buildings.extend([Building.from_json(a) for a in building_list])
-        print(self._buildings)
 
     def file_save(self) -> None:
         """ Saves buildings as xml file """
         filename = filedialog.asksaveasfilename(
             initialdir='./',
-            title='Výber Súbor',
+            title='Vyber Súbor',
             filetypes=(('xml súbory', '*.xml'), ("všetky súbory", "*.*"))
         )
 

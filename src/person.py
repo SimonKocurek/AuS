@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class Person:
-    """Class holdin data about a single accommodated person"""
+    """Class holding data about a single accommodated person"""
 
     def __init__(
             self,

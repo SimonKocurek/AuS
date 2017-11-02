@@ -1,7 +1,7 @@
 from functools import reduce
 
-from dwelling import Dwelling
-from person import Person
+from src.dwelling import Dwelling
+from src.person import Person
 
 
 class Building():

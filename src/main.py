@@ -1,8 +1,8 @@
-import atexit # Exit program callback
-import json # Serialize object <-> json
+import atexit  # Exit program callback
+import json  # Serialize object <-> json
 
-from building import Building
-from gui import Gui
+from src.building import Building
+from src.gui import Gui
 
 DATA_FILE = 'data.json'
 buildings = []
