@@ -1,3 +1,4 @@
+# coding=utf-8
 from src.person import Person
 
 

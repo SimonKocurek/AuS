@@ -1,20 +1,20 @@
+# coding=utf-8
 from functools import reduce
 
 from src.dwelling import Dwelling
 from src.person import Person
 
 
-class Building():
+class Building:
     """Building as a list of dwellings"""
 
     def __init__(self, street: str, number: int, dwellings=None):
-        """Basic constructor"""
 
         if dwellings is None:
             dwellings = []
 
         if street is None or len(street) == 0:
-            raise ValueError(f'You must provide a street name for the building')
+            raise ValueError('You must provide a street name for the building')
 
         self._street = street
         self._number = number
@@ -36,18 +36,38 @@ class Building():
         return self._dwellings
 
     def get_by_block(self, block: str):
+        """
+
+        :param block:
+        :return:
+        """
         return filter(lambda dwelling: dwelling.block == block, self._dwellings)
 
     def get_by_floor(self, block: str):
+        """
+
+        :param block:
+        """
         pass
 
     def free_blocks(self):
+        """
+
+        """
         pass
 
     def free_cells(self, block):
+        """
+
+        :param block:
+        """
         pass
 
     def free_rooms(self, block):
+        """
+
+        :param block:
+        """
         pass
 
     def free_spaces(self):
