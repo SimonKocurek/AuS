@@ -5,7 +5,7 @@ from src.person import Person
 class Dwelling:
     """Class holding data about a one room"""
 
-    def __init__(self, block: str, floor: int, cell: int, room: str, space: int, people=None):
+    def __init__(self, block: str, floor: int, cell: int, room: str, space: int, people: [Person] = None):
         """Basic constructor"""
 
         if people is None:
@@ -55,7 +55,7 @@ class Dwelling:
         """
         :return: Number of people that can still fit inside the dwelling
         """
-        return len(self._people) - self._space
+        return self._space - len(self._people)
 
     @property
     def block(self) -> str:
@@ -114,8 +114,7 @@ class Dwelling:
             json['cell'],
             json['room'],
             json['space'],
-            map(lambda person: Person.from_json(person), json['people'])
-        )
+            list(map(lambda person: Person.from_json(person), json['people'])))
 
     def __gt__(self, other) -> bool:
         """Dwelling is sooner in alphabetical sorting"""

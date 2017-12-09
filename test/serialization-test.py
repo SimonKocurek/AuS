@@ -1,14 +1,13 @@
+# coding=utf-8
 import unittest
 from datetime import datetime
 
-from dwelling import Dwelling
-from person import Person
-
 from src.building import Building
+from src.dwelling import Dwelling
+from src.person import Person
 
 
 class SerializationTest(unittest.TestCase):
-
     def test_person_serialization(self):
         person = Person('Jožko', '14aq34e21g90vha', 'm', datetime.now(), 'Košice', 'CAI')
         serialized = person.to_json()
@@ -32,7 +31,9 @@ class SerializationTest(unittest.TestCase):
         person3 = Person('Ďurko', 'asdf', 'm', datetime.now(), 'Peking', 'UFV')
         dwelling2 = Dwelling('B', 3, 201, 'A', 2, [person3])
 
-        building = Building('Medická', 4, [dwelling, dwelling2])
+        dwelling3 = Dwelling('B', 4, 301, 'A', 3, [person3])
+
+        building = Building('Medická', 4, [dwelling, dwelling2, dwelling3])
         serialized = building.to_json()
 
         self.assertEqual(serialized, Building.from_json(serialized).to_json())

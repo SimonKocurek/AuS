@@ -44,7 +44,7 @@ class Person:
             'name': self.name,
             'code': self.code,
             'gender': self.gender,
-            'date_of_birth': self.date_of_birth,
+            'date_of_birth': str(self.date_of_birth),
             'birthplace': self.birthplace,
             'workspace': self.workspace
         }
