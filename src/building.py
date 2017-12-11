@@ -1,7 +1,7 @@
 # coding=utf-8
-from functools import reduce
-
 import math
+import uuid
+from functools import reduce
 
 from src.dwelling import Dwelling
 from src.person import Person
@@ -10,7 +10,7 @@ from src.person import Person
 class Building:
     """Building as a list of dwellings"""
 
-    def __init__(self, street: str, number: int, dwellings=None):
+    def __init__(self, street: str, number: int, dwellings: [Dwelling] = None, id: str = str(uuid.uuid4())):
 
         if dwellings is None:
             dwellings = []
@@ -18,19 +18,35 @@ class Building:
         if street is None or len(street) == 0:
             raise ValueError('You must provide a street name for the building')
 
+        self._id = id
         self._street = street
         self._number = number
         self._dwellings = dwellings
+
+    @property
+    def id(self) -> str:
+        """Get the building id """
+        return self._id
 
     @property
     def street(self) -> str:
         """Get the building street"""
         return self._street
 
+    @street.setter
+    def street(self, value: str) -> None:
+        """Set the building street"""
+        self._street = value
+
     @property
     def number(self) -> int:
         """Get the building number"""
         return self._number
+
+    @number.setter
+    def number(self, value: int) -> None:
+        """Set the building number"""
+        self._number = value
 
     @property
     def dwellings(self) -> list:
@@ -108,9 +124,10 @@ class Building:
         :return: Building as a JSON object
         """
         return {
-            'street': self._street,
-            'number': self._number,
-            'dwellings': list(map(lambda dwelling: dwelling.to_json(), self._dwellings))
+            'id': self.id,
+            'street': self.street,
+            'number': self.number,
+            'dwellings': list(map(lambda dwelling: dwelling.to_json(), self.dwellings))
         }
 
     @staticmethod
@@ -124,7 +141,8 @@ class Building:
         return Building(
             json['street'],
             json['number'],
-            list(map(lambda dwelling: Dwelling.from_json(dwelling), json['dwellings']))
+            list(map(lambda dwelling: Dwelling.from_json(dwelling), json['dwellings'])),
+            json['id']
         )
 
     def __ge__(self, other) -> bool:
@@ -133,14 +151,17 @@ class Building:
 
     def __eq__(self, other) -> bool:
         """Building is same"""
-        return str(self) == str(other)
+        return type(self) == type(other) and \
+               self.id == other.id and \
+               self.street == other.street and \
+               self.number == other.number
 
     def __hash__(self) -> int:
-        """Hash based on building number"""
-        return self._number
+        """Hash based on building id"""
+        return hash(self.id)
 
     def __str__(self):
         """Basic buiding identifier"""
-        return f'{self._street} {self._number}'
+        return f'{self._street} {self.number}'
 
     __repr__ = __str__
