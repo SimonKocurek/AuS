@@ -1,6 +1,7 @@
 # coding=utf-8
 import math
 import uuid
+from collections import OrderedDict
 from functools import reduce
 
 from src.dwelling import Dwelling
@@ -10,17 +11,22 @@ from src.person import Person
 class Building:
     """Building as a list of dwellings"""
 
-    def __init__(self, street: str, number: int, dwellings: [Dwelling] = None, id: str = str(uuid.uuid4())):
-
+    def __init__(self, street: str, number: int, dwellings: [Dwelling] = None, identifier: str = None):
         if dwellings is None:
             dwellings = []
 
         if street is None or len(street) == 0:
             raise ValueError('You must provide a street name for the building')
 
-        self._id = id
+        if number < 0:
+            raise ValueError(f'You must provide non negative street number, got {number}')
+
+        if not identifier or not identifier.strip():
+            identifier = str(uuid.uuid4())
+
+        self._id = identifier
         self._street = street
-        self._number = number
+        self._number = int(number)
         self._dwellings = dwellings
 
     @property
@@ -67,7 +73,7 @@ class Building:
         :param floor: Floor to find dwellings from
         :param cell: Cell to find dwellings from
         :param room: Find rooms with same id
-        :param space: Find rooms with same ammount of space
+        :param space: Find rooms with same amount of space
         :param people: Find dwellings these people live in
         :param minimum_free_spaces: The lowest number of free spaces in a dwelling (inclusive)
         :param maximum_free_spaces: The highest number of free spaces in a dwelling (inclusive)
@@ -92,7 +98,7 @@ class Building:
             result = list(filter(lambda dwelling: dwelling.space == space, result))
 
         if people:
-            result = list(filter(lambda dwelling: self.contains_person(dwelling.people, people), result))
+            result = list(filter(lambda dwelling: self.contains_person(people), result))
 
         if minimum_free_spaces:
             result = list(filter(lambda dwelling: dwelling.free_spaces() >= minimum_free_spaces, result))
@@ -102,11 +108,11 @@ class Building:
 
         return result
 
-    def contains_person(self, searched: [Person], people: [Person]) -> bool:
+    def contains_person(self, searched: [Person]) -> bool:
         """
         :return: Searched contains a person from people
         """
-        for person in people:
+        for person in self.all_people():
             if person in searched:
                 return True
         return False
@@ -138,9 +144,12 @@ class Building:
         if json['dwellings'] is None:
             json['dwellings'] = []
 
+        if not isinstance(json['dwellings'], list):
+            json['dwellings'] = [dict(json['dwellings'])]
+
         return Building(
             json['street'],
-            json['number'],
+            int(json['number']),
             list(map(lambda dwelling: Dwelling.from_json(dwelling), json['dwellings'])),
             json['id']
         )
@@ -161,7 +170,7 @@ class Building:
         return hash(self.id)
 
     def __str__(self):
-        """Basic buiding identifier"""
+        """Basic building identifier"""
         return f'{self._street} {self.number}'
 
     __repr__ = __str__

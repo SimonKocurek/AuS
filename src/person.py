@@ -14,7 +14,7 @@ class Person:
                  birthplace: str,
                  workspace: str,
                  date_added: datetime = datetime.now(),
-                 id: str = str(uuid.uuid4())):
+                 identifier: str = None):
         """Basic constructor"""
         if name is None or len(name) == 0:
             raise ValueError(f'Person must have a name, but got {name}')
@@ -25,7 +25,10 @@ class Person:
         if gender is None or len(gender) != 1:
             raise ValueError(f'Person must have a one letter gender [m, f], but got {gender}')
 
-        self._id = id
+        if not identifier or not identifier.strip():
+            identifier = str(uuid.uuid4())
+
+        self._id = identifier
         self.name = name
         self.code = code
         self.gender = gender
@@ -106,7 +109,7 @@ class Person:
     @property
     def date_added(self) -> datetime:
         """Get the person added date"""
-        return self._name
+        return self._date_added
 
     @date_added.setter
     def date_added(self, value: datetime) -> None:
@@ -139,7 +142,7 @@ class Person:
             json['date_of_birth'],
             json['birthplace'],
             json['workspace'],
-            json['id']
+            identifier=json['id']
         )
 
     def __ge__(self, other) -> bool:

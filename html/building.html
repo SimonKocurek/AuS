@@ -8,13 +8,24 @@
 
     <title>Ubytovací informačný systém</title>
 
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
           integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 </head>
 
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-    <a class="navbar-brand" href="javascript:void(0)" style="flex-grow: 2;">UiS</a>
+    <a class="navbar-brand" href="/">UiS</a>
+    <div class="dropdown mr-auto">
+        <a class="nav-link dropdown-toggle text-light" id="navbarDropdown" role="button" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            Export
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" onclick="saveAsXml()">Save as xml</a>
+            <a class="dropdown-item" onclick="loadAsXml()">Load as xml</a>
+        </div>
+    </div>
     <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
@@ -26,9 +37,24 @@
     <ul>
         {% for dwelling in dwellings %}
         <li class="list-group-item">
-            {{ dwelling }}
+            <span>
+                {{ dwelling }}
+            </span>
+            <span>
+                Free spaces: {{ dwelling.free_spaces() }}
+            </span>
+            <ul>
+                {% for person in dwelling.people %}
+                <li>
+                    {{ person }}
+                </li>
+                {% endfor %}
+            </ul>
         </li>
         {% endfor %}
+        <li class="list-group-item">
+            <button class="btn btn-outline-danger" onclick="addDwelling()">+ Add Dwelling</button>
+        </li>
     </ul>
 </main>
 
@@ -41,5 +67,24 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
         integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
         crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    function addDwelling(building) {
+        $.ajax({
+            type: 'POST',
+            url: location.href
+        });
+
+        location.reload();
+    }
+
+    function saveAsXml() {
+        location.href = 'http://localhost:5431/save';
+    }
+
+    function loadAsXml() {
+        location.href = 'http://localhost:5431/load';
+    }
+</script>
 </body>
 </html>

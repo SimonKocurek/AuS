@@ -1,5 +1,5 @@
 # coding=utf-8
-import atexit  # Exit program callback
+import atexit
 import threading
 import webbrowser
 
@@ -8,6 +8,7 @@ from src.filemanager import FileManager
 
 
 def main():
+    """ Starting method """
     data_file = '../data.json'
 
     webapp.buildings = FileManager.load_buildings(data_file)

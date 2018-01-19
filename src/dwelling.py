@@ -1,5 +1,6 @@
 # coding=utf-8
 import uuid
+from collections import OrderedDict
 
 from src.person import Person
 
@@ -7,25 +8,29 @@ from src.person import Person
 class Dwelling:
     """Class holding data about a one room"""
 
-    def __init__(self, block: str,
+    def __init__(self,
+                 block: str,
                  floor: int,
                  cell: int,
                  room: str,
                  space: int,
                  people: [Person] = None,
-                 id: str = str(uuid.uuid4())):
+                 identifier: str = None):
         """Basic constructor"""
 
         if people is None:
             people = []
 
         if len(block) != 1:
-            raise ValueError(f'Block shoul be one letter, but got {block}')
+            raise ValueError(f'Block should be one letter, but got {block}')
 
         if space <= 0:
             raise ValueError(f'Dwelling must be able to accommodate at least 1 person, but got {space}')
 
-        self._id = id
+        if not identifier or not identifier.strip():
+            identifier = str(uuid.uuid4())
+
+        self._id = identifier
         self._block = block.upper()
         self._floor = floor
         self._cell = cell
@@ -148,12 +153,15 @@ class Dwelling:
         if json['people'] is None:
             json['people'] = []
 
+        if not isinstance(json['people'], list):
+            json['people'] = [dict(json['people'])]
+
         return Dwelling(
             json['block'],
-            json['floor'],
-            json['cell'],
+            int(json['floor']),
+            int(json['cell']),
             json['room'],
-            json['space'],
+            int(json['space']),
             list(map(lambda person: Person.from_json(person), json['people'])),
             json['id']
         )
@@ -177,7 +185,7 @@ class Dwelling:
         return hash(self.id)
 
     def __str__(self) -> str:
-        """Exapmpe: A 223B"""
+        """Example: A 223B"""
         return f'{self._block} {self._floor}{self._cell}{self._room}'
 
     __repr__ = __str__
