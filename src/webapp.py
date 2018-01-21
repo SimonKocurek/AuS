@@ -8,43 +8,78 @@ from flask import Flask, render_template, request, json, send_from_directory
 from src.building import Building
 from src.dwelling import Dwelling
 from src.filemanager import FileManager
+from src.utilities import get_building_by_id, non_negative
 
 app = Flask(__name__, template_folder='../html')
 buildings: [Building] = []
 
 
-def get_building_by_id(identifier: str) -> Building:
-    """
-    :param identifier: id of building
-    :return: Building with specified id
-    """
-    building = next((b for b in buildings if b.id == identifier), None)
-
-    if not building:
-        raise ValueError(f'Building with id {id} could not be found.')
-
-    return building
-
-
-def non_negative(number: int) -> int:
-    """
-    :return: Number, or 0 if number is negative
-    """
-    return max(0, number)
-
+#########
+# Imports
+#########
 
 @app.route('/favicon.ico')
 def favicon():
     """
     :return: Favicon icon
     """
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
+    return send_from_directory(app.template_folder, 'favicon.png')
 
+
+@app.route('/style.css')
+def style():
+    """
+    :return: Styles file
+    """
+    return send_from_directory(app.template_folder, 'style.css')
+
+
+@app.route('/bootstrap.css')
+def bootstrap_styles():
+    """
+    :return: Bootstrap looks
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'bootstrap.min.css')
+
+
+@app.route('/bootstrap.js')
+def bootstrap_javascript():
+    """
+    :return: Bootstrap code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'bootstrap.min.js')
+
+
+@app.route('/jquery.js')
+def jquery():
+    """
+    :return: Jquery code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'jquery-3.2.1.slim.min.js')
+
+
+@app.route('/popper.js')
+def popper():
+    """
+    :return: Popper code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'popper.min.js')
+
+
+#######
+# Pages
+#######
 
 @app.route("/", methods=['GET'])
 def index():
+    """ Intro page """
+    return render_template('index.html')
+
+
+@app.route("/menu", methods=['GET'])
+def menu():
     """ Starting page for selecting building """
-    return render_template('index.html', buildings=buildings)
+    return render_template('menu.html', buildings=buildings)
 
 
 @app.route('/search', methods=['POST'])
@@ -97,7 +132,7 @@ def delete_building():
     identifier = data['id'][0]
 
     try:
-        building = get_building_by_id(identifier)
+        building = get_building_by_id(identifier, buildings)
     except ValueError as error:
         print(error, file=sys.stderr)
         return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
@@ -116,7 +151,7 @@ def update_buildings():
     number = int(data['number'][0])
 
     try:
-        building = get_building_by_id(identifier)
+        building = get_building_by_id(identifier, buildings)
     except ValueError as error:
         print(error, file=sys.stderr)
         return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}

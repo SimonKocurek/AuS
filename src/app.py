@@ -1,7 +1,5 @@
 # coding=utf-8
 import atexit
-import threading
-import webbrowser
 
 from src import webapp
 from src.filemanager import FileManager
@@ -15,7 +13,7 @@ def main():
     atexit.register(lambda: FileManager.write_file(data_file, webapp.buildings))
 
     port = 5431
-    threading.Timer(1.25, lambda: webbrowser.open(f'http://localhost:{port}')).start()
+    # threading.Timer(1.25, lambda: webbrowser.open(f'http://localhost:{port}')).start()
     webapp.app.run(port=port, debug=False)
 
 
