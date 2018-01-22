@@ -3,141 +3,98 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <meta name="description" content="">
-      <meta name="author" content="">
+      <meta name="description" content="Informačný systém pre na organizáciu ubytovania">
+      <meta name="author" content="Šimon Kocúrek">
 
       <title>Ubytovací informačný systém</title>
 
-      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
-            integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+      <link rel="stylesheet" href="bootstrap.css">
+      <link rel="stylesheet" href="style.css">
    </head>
 
-   <body onload="redirect()">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-         <a class="navbar-brand" href="/">UiS</a>
-         <div class="dropdown mr-auto">
-            <a class="nav-link dropdown-toggle text-light" id="navbarDropdown" role="button" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
-               Export
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-               <a class="dropdown-item" onclick="saveAsXml()">Save as xml</a>
-               <a class="dropdown-item" onclick="loadAsXml()">Load as xml</a>
+   <body class="text-center">
+
+      <div class="container d-flex h-100 p-3 mx-auto flex-column">
+
+         <nav class="navbar navbar-expand-md nav-masthead navbar-dark fixed-top blue-background">
+            <a href="javascript:void(0)"><h3 class="masthead-brand">UiS</h3></a>
+
+            <ul class="ml-5 navbar-nav mr-auto">
+               <li class="nav-item active">
+                  <a class="nav-link active" href="{{ url_for('menu') }}">Domov</a>
+               </li>
+
+               <li class="nav-item">
+                  <div class="dropdown">
+                     <a class="nav-item nav-link dropdown-toggle text-light" role="button" data-toggle="dropdown" href="javascript:void(0)">
+                        Súbor
+                     </a>
+                     <div class="dropdown-menu">
+                        <form class="dropdown-item" id="save_form" action="save" method="post">
+                           <a class="blue-text" href="javascript:$('#save_form').submit();">Uložiť, ako XML</a>
+                        </form>
+                        <div class="dropdown-divider"></div>
+                        <form class="dropdown-item" id="load_form" action="load" method="post">
+                           <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
+                        </form>
+                     </div>
+                  </div>
+               </li>
+
+               <li class="nav-item">
+                  <form class="dropdown-item" id="logout_form" action="logout" method="get">
+                     <a class="nav-link" href="javascript:$('#logout_form').submit();">Odhlásiť</a>
+                  </form>
+               </li>
+            </ul>
+
+            <form class="form-inline mt-2 mt-md-0" action="search" method="get">
+               <input class="form-control mr-sm-2" type="text" placeholder="Hľadať" aria-label="Search">
+               <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Hľadať</button>
+            </form>
+         </nav>
+
+         <main class="container my-5">
+            SORT
+            <ul class="list-group form-group" id="list">
+               {% for building in buildings %}
+               <li class="list-group-item">
+                  <button type="button" class="close" aria-label="Close" onclick="deleteBuilding('{{ building.id }}')">
+                     <span class="text-danger" aria-hidden="true">&times;</span>
+                  </button>
+                  <label for="street_{{ building.id }}">Street</label>
+                  <input class="form-control"
+                         placeholder="Enter street name"
+                         value="{{ building.street }}"
+                         onblur="updateBuilding('{{ building.id }}')"
+                         id="street_{{ building.id }}">
+                  <label class="mt-2" for="number_{{ building.id }}">Number</label>
+                  <input class="form-control"
+                         type="number"
+                         placeholder="Enter street number"
+                         value="{{ building.number }}"
+                         onblur="updateBuilding('{{ building.id }}')"
+                         id="number_{{ building.id }}">
+                  <a href="http://localhost:5431/building/{{ building.id }}">
+                     <button class="mt-3 btn btn-outline-danger">Select</button>
+                  </a>
+               </li>
+               {% endfor %}
+               <li class="list-group-item">
+                  <button class="btn btn-outline-danger" onclick="addBuilding()">+ Add building</button>
+               </li>
+            </ul>
+         </main>
+
+         <footer class="mastfoot mt-auto">
+            <div class="inner">
+               <p>Vytvorené pomocou <a href="https://getbootstrap.com/">Bootstrap</a> frameworku.</p>
             </div>
-         </div>
-         <form class="form-inline my-2 my-lg-0" action="{{ url_for('search') }}" method="post">
-            <input class="form-control mr-sm-2" type="search" name="filter" placeholder="Search">
-            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-         </form>
-      </nav>
+         </footer>
+      </div>
 
-      <main class="container my-5">
-         SORT
-         <ul class="list-group form-group" id="list">
-            {% for building in buildings %}
-            <li class="list-group-item">
-               <button type="button" class="close" aria-label="Close" onclick="deleteBuilding('{{ building.id }}')">
-                  <span class="text-danger" aria-hidden="true">&times;</span>
-               </button>
-               <label for="street_{{ building.id }}">Street</label>
-               <input class="form-control"
-                      placeholder="Enter street name"
-                      value="{{ building.street }}"
-                      onblur="updateBuilding('{{ building.id }}')"
-                      id="street_{{ building.id }}">
-               <label class="mt-2" for="number_{{ building.id }}">Number</label>
-               <input class="form-control"
-                      type="number"
-                      placeholder="Enter street number"
-                      value="{{ building.number }}"
-                      onblur="updateBuilding('{{ building.id }}')"
-                      id="number_{{ building.id }}">
-               <a href="http://localhost:5431/building/{{ building.id }}">
-                  <button class="mt-3 btn btn-outline-danger">Select</button>
-               </a>
-            </li>
-            {% endfor %}
-            <li class="list-group-item">
-               <button class="btn btn-outline-danger" onclick="addBuilding()">+ Add building</button>
-            </li>
-         </ul>
-      </main>
-
-      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-              integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-              crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
-              integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
-              crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
-              integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
-              crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script>
-
-          function redirect() {
-              if (/(http)?s?:\/\/localhost:5431\/(load|save)/.test(location.href)) {
-                  location.href = "http://localhost:5431/";
-              }
-          }
-
-          function deleteBuilding(id) {
-              if (confirm('Are you sure you want to delete the building?')) {
-                  $.ajax({
-                      type: 'DELETE',
-                      url: 'http://localhost:5431/',
-                      data: {
-                          id: id
-                      }
-                  });
-                  location.reload();
-              }
-          }
-
-          function updateBuilding(id) {
-              var streetName = document.getElementById('street_' + id).value.trim();
-              var streetNumber = Number(document.getElementById('number_' + id).value);
-
-              if (!streetName) {
-                  alert('Error!\nYour street name can\'t be empty.');
-                  location.reload();
-                  return;
-              }
-
-              if (!streetNumber && streetNumber !== 0 || streetNumber < 0) {
-                  alert('Error!\nYour street number is invalid.');
-                  location.reload();
-                  return;
-              }
-
-              $.ajax({
-                  type: 'PUT',
-                  url: location.href,
-                  data: {
-                      id: id,
-                      street: streetName,
-                      number: streetNumber
-                  }
-              });
-          }
-
-          function addBuilding() {
-              $.ajax({
-                  type: 'POST',
-                  url: location.href
-              });
-
-              location.reload(true);
-          }
-
-          function saveAsXml() {
-              location.href = 'http://localhost:5431/save';
-          }
-
-          function loadAsXml() {
-              location.href = 'http://localhost:5431/load';
-          }
-      </script>
+      <script src="jquery.js"></script>
+      <script src="popper.js"></script>
+      <script src="bootstrap.js"></script>
    </body>
 </html>

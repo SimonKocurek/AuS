@@ -1,9 +1,9 @@
 # coding=utf-8
+import os
 import sys
 import threading
 
 import easygui
-import os
 import xmltodict
 from dict2xml import dict2xml
 from flask import json
@@ -61,7 +61,10 @@ class FileManager:
                 xml = xmltodict.parse(file.read())
                 root_element = dict(xml['buildings'])
 
-                if not isinstance(root_element['building'], list):
+                if root_element['building'] is None:
+                    root_element['building'] = []
+
+                elif not isinstance(root_element['building'], list):
                     root_element['building'] = [dict(root_element['building'])]
 
                 return [Building.from_json(building) for building in root_element['building']]

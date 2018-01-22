@@ -1,44 +1,49 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Informačný systém pre na organizáciu ubytovania">
-        <meta name="author" content="Šimon Kocúrek">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="Informačný systém pre na organizáciu ubytovania">
+      <meta name="author" content="Šimon Kocúrek">
 
-        <title>Ubytovací informačný systém</title>
+      <title>Ubytovací informačný systém</title>
 
-        <link rel="stylesheet" href="bootstrap.css">
-        <link rel="stylesheet" href="style.css">
-    </head>
+      <link rel="stylesheet" href="bootstrap.css">
+      <link rel="stylesheet" href="style.css">
+   </head>
 
-    <body class="text-center">
+   <body class="text-center blue-background">
 
-        <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-            <header class="masthead mb-auto">
-                <div class="inner">
-                    <h3 class="masthead-brand">UiS</h3>
-                </div>
-            </header>
+      <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+         <header class="masthead mb-auto">
+            <div class="inner">
+               <a href="#"><h3 class="masthead-brand">UiS</h3></a>
+            </div>
+         </header>
 
-            <main role="main" class="inner cover">
-                <h1 class="cover-heading">Spravuj ubytovňu pohodlne</h1>
-                <p class="lead">Začni organizovať izby a zákazníkov prihlásením do systému. Všetky informácie, jednoducho filtrovateľné a usporiadaveteľné na dosah ruky.</p>
-                <p class="lead">
-                    <a href="#" class="btn btn-lg btn-secondary">Ďalej</a>
-                </p>
-            </main>
-
-            <footer class="mastfoot mt-auto">
-                <div class="inner">
-                    <p>Vytvorené pomocou <a href="https://getbootstrap.com/">Bootstrap</a> frameworku.</p>
-                </div>
-            </footer>
-        </div>
+         <main role="main" class="inner cover">
+            <h1 class="cover-heading">Spravuj ubytovňu pohodlne</h1>
+            <p class="lead">Začni organizovať izby a zákazníkov prihlásením do systému. Všetky informácie, jednoducho filtrovateľné a usporiadaveteľné na dosah ruky.</p>
 
 
-        <script src="bootstrap.js"></script>
-        <script src="jquery.js"></script>
-        <script src="popper.js"></script>
-    </body>
+            <form class="form-signin d-flex lead mx-5" action="/" method="post">
+               <label for="inputCode" class="sr-only">Prihlasovací kód</label>
+               <input type="password" id="inputCode" class="form-control mr-2" placeholder="Prihlasovací kód" autofocus required>
+
+               <input type="submit" value="Ďalej" class="ml-2 btn btn-lg btn-secondary"/>
+            </form>
+
+         </main>
+
+         <footer class="mastfoot mt-auto">
+            <div class="inner">
+               <p>Vytvorené pomocou <a href="https://getbootstrap.com/">Bootstrap</a> frameworku.</p>
+            </div>
+         </footer>
+      </div>
+
+      <script src="jquery.js"></script>
+      <script src="popper.js"></script>
+      <script src="bootstrap.js"></script>
+   </body>
 </html>

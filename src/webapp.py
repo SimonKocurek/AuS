@@ -1,9 +1,10 @@
 # coding=utf-8
+import atexit
 import os
 import sys
 
 import easygui
-from flask import Flask, render_template, request, json, send_from_directory
+from flask import Flask, render_template, request, json, send_from_directory, redirect, url_for
 
 from src.building import Building
 from src.dwelling import Dwelling
@@ -12,6 +13,7 @@ from src.utilities import get_building_by_id, non_negative
 
 app = Flask(__name__, template_folder='../html')
 buildings: [Building] = []
+user_code: str
 
 
 #########
@@ -76,7 +78,22 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/menu", methods=['GET'])
+@app.route("/", methods=['POST'])
+def login():
+    """ Logging using Intro page """
+    global user_code
+    user_code = request.args.get('inputCode')
+
+    data_file = f'../{user_code}.json'
+
+    global buildings
+    buildings = FileManager.load_buildings(data_file)
+    atexit.register(lambda: FileManager.write_file(data_file, buildings))
+
+    return redirect(url_for('menu'), code=307)
+
+
+@app.route("/menu", methods=['GET', 'POST'])
 def menu():
     """ Starting page for selecting building """
     return render_template('menu.html', buildings=buildings)
@@ -91,10 +108,10 @@ def search():
                           for building in buildings
                           if content in building.street or content in str(building.number)]
 
-    return render_template('index.html', buildings=filtered_buildings)
+    return render_template('menu.html', buildings=filtered_buildings)
 
 
-@app.route("/load", methods=['GET'])
+@app.route("/load", methods=['POST'])
 def load_buildings():
     """ Load buildings from external xml file """
     filename = easygui.fileopenbox('File to load xml content from', 'Save file', filetypes=['xml'])
@@ -105,17 +122,17 @@ def load_buildings():
     if loaded_buildings:
         buildings = loaded_buildings
 
-    return render_template('index.html', buildings=buildings)
+    return redirect(url_for('menu'), code=307)
 
 
-@app.route('/save', methods=['GET'])
+@app.route('/save', methods=['POST'])
 def save_buildings():
     """ Save buildings to external xml file """
     filename = easygui.filesavebox('File to save xml content', 'Save file')
 
     FileManager.save_file_as_xml(filename, buildings)
 
-    return render_template('index.html', buildings=buildings)
+    return redirect(url_for('menu'), code=307)
 
 
 @app.route("/", methods=['POST'])

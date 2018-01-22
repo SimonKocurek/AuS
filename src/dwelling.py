@@ -1,6 +1,5 @@
 # coding=utf-8
 import uuid
-from collections import OrderedDict
 
 from src.person import Person
 

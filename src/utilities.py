@@ -4,6 +4,7 @@ from src.building import Building
 def get_building_by_id(identifier: str, buildings: [Building]) -> Building:
     """
     :param identifier: id of building
+    :param buildings: list with buildings to search
     :return: Building with specified id
     """
     building = next((b for b in buildings if b.id == identifier), None)
