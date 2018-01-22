@@ -12,8 +12,10 @@ from src.filemanager import FileManager
 from src.utilities import get_building_by_id, non_negative
 
 app = Flask(__name__, template_folder='../html')
+
 buildings: [Building] = []
-user_code: str
+user_code: str = None
+data_file: str = None
 
 
 #########
@@ -69,21 +71,22 @@ def popper():
 
 
 #######
-# Pages
+# Login
 #######
 
-@app.route("/", methods=['GET'])
+@app.route('/', methods=['GET'])
 def index():
     """ Intro page """
     return render_template('index.html')
 
 
-@app.route("/", methods=['POST'])
+@app.route('/', methods=['POST'])
 def login():
     """ Logging using Intro page """
     global user_code
-    user_code = request.args.get('inputCode')
+    user_code = request.form.get('inputCode', default='', type=str)
 
+    global data_file
     data_file = f'../{user_code}.json'
 
     global buildings
@@ -93,16 +96,20 @@ def login():
     return redirect(url_for('menu'), code=307)
 
 
-@app.route("/menu", methods=['GET', 'POST'])
+######
+# Menu
+######
+
+@app.route('/menu', methods=['GET', 'POST'])
 def menu():
     """ Starting page for selecting building """
     return render_template('menu.html', buildings=buildings)
 
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search():
     """ Returns only filtered out buildings """
-    content = request.form['filter']
+    content = request.args.get('filter', default=None, type=str)
 
     filtered_buildings = [building
                           for building in buildings
@@ -111,7 +118,24 @@ def search():
     return render_template('menu.html', buildings=filtered_buildings)
 
 
-@app.route("/load", methods=['POST'])
+@app.route('/logout', methods=['POST'])
+def logout():
+    """ Returns only filtered out buildings """
+    global user_code
+    global data_file
+    global buildings
+
+    if data_file and buildings:
+        FileManager.write_file(data_file, buildings)
+
+    user_code = ''
+    data_file = ''
+    buildings = []
+
+    return redirect('/')
+
+
+@app.route('/load', methods=['POST'])
 def load_buildings():
     """ Load buildings from external xml file """
     filename = easygui.fileopenbox('File to load xml content from', 'Save file', filetypes=['xml'])
@@ -122,7 +146,7 @@ def load_buildings():
     if loaded_buildings:
         buildings = loaded_buildings
 
-    return redirect(url_for('menu'), code=307)
+    return redirect(url_for('menu'))
 
 
 @app.route('/save', methods=['POST'])
@@ -132,17 +156,21 @@ def save_buildings():
 
     FileManager.save_file_as_xml(filename, buildings)
 
-    return redirect(url_for('menu'), code=307)
+    return redirect(url_for('menu'))
 
 
-@app.route("/", methods=['POST'])
+###########
+# Buildings
+###########
+
+@app.route('/menu/building', methods=['POST'])
 def add_building():
     """ Add new building """
     buildings.append(Building('No street', 0))
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    return redirect(url_for('menu'))
 
 
-@app.route("/", methods=['DELETE'])
+@app.route('/menu/building', methods=['DELETE'])
 def delete_building():
     """ Delete a building """
     data = dict(request.form)
@@ -159,7 +187,7 @@ def delete_building():
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-@app.route("/", methods=['PUT'])
+@app.route('/', methods=['PUT'])
 def update_buildings():
     """ Change building details """
     data = dict(request.form)
@@ -179,7 +207,7 @@ def update_buildings():
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-@app.route("/building/<building_id>", methods=['GET'])
+@app.route('/building/<building_id>', methods=['GET'])
 def building_screen(building_id: str):
     """ Page showing fist building """
     building = get_building_by_id(building_id)
@@ -189,7 +217,7 @@ def building_screen(building_id: str):
                            dwellings=building.dwellings)
 
 
-@app.route("/building/<building_id>", methods=['POST'])
+@app.route('/building/<building_id>', methods=['POST'])
 def add_dwelling(building_id: str):
     """ Adds dwelling to the building """
     building = get_building_by_id(building_id)
