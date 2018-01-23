@@ -22,17 +22,10 @@
          </header>
 
          <main role="main" class="inner cover">
-            <h1 class="cover-heading">Spravuj ubytovňu pohodlne</h1>
-            <p class="lead">Začni organizovať izby a zákazníkov prihlásením do systému. Všetky informácie, jednoducho filtrovateľné a usporiadaveteľné na dosah ruky.</p>
+            <h1 class="cover-heading">Ooops!</h1>
+            <p class="lead">Nastala chyba našej, alebo vašej strane: {{ error }}</p>
 
-
-            <form class="form-signin d-flex lead mx-5" action="{{ url_for('login') }}" method="post">
-               <label for="inputCode" class="sr-only">Prihlasovací kód</label>
-               <input type="password" id="inputCode" name="inputCode" class="form-control mr-2" placeholder="Prihlasovací kód" autofocus required>
-
-               <input type="submit" value="Ďalej" class="ml-2 btn btn-lg btn-secondary"/>
-            </form>
-
+            <a class="btn btn-lg btn-secondary" href="{{ url_for('login') }}">Naspäť</a>
          </main>
 
          <footer class="mastfoot mt-auto">

@@ -1,15 +1,15 @@
 # coding=utf-8
-import atexit
 import os
 import sys
 
 import easygui
-from flask import Flask, render_template, request, json, send_from_directory, redirect, url_for
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 
 from src.building import Building
+from src.business import Business
 from src.dwelling import Dwelling
 from src.filemanager import FileManager
-from src.utilities import get_building_by_id, non_negative
+from src.utilities import get_building_by_id, non_negative, is_logged_out, logout_user, error_checked
 
 app = Flask(__name__, template_folder='../html')
 
@@ -76,24 +76,14 @@ def popper():
 
 @app.route('/', methods=['GET'])
 def index():
-    """ Intro page """
-    return render_template('index.html')
+    """ Intro page header """
+    return error_checked(Business.index, 'Zlyhalo získavanie úvodnej stránky.')
 
 
 @app.route('/', methods=['POST'])
 def login():
     """ Logging using Intro page """
-    global user_code
-    user_code = request.form.get('inputCode', default='', type=str)
-
-    global data_file
-    data_file = f'../{user_code}.json'
-
-    global buildings
-    buildings = FileManager.load_buildings(data_file)
-    atexit.register(lambda: FileManager.write_file(data_file, buildings))
-
-    return redirect(url_for('menu'), code=307)
+    return error_checked(Business.login, 'Zlyhalo prihlasovanie.')
 
 
 ######
@@ -103,12 +93,15 @@ def login():
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
     """ Starting page for selecting building """
-    return render_template('menu.html', buildings=buildings)
+    return error_checked(Business.menu, 'Zlyhalo získavanie budov.')
 
 
 @app.route('/search', methods=['GET'])
 def search():
     """ Returns only filtered out buildings """
+    if is_logged_out():
+        return redirect('/')
+
     content = request.args.get('filter', default=None, type=str)
 
     filtered_buildings = [building
@@ -118,26 +111,31 @@ def search():
     return render_template('menu.html', buildings=filtered_buildings)
 
 
+@app.route('/sort', methods=['GET'])
+def sort():
+    """
+
+    :return:
+    """
+    pass
+
+
 @app.route('/logout', methods=['POST'])
 def logout():
     """ Returns only filtered out buildings """
-    global user_code
-    global data_file
-    global buildings
+    if is_logged_out():
+        return redirect('/')
 
-    if data_file and buildings:
-        FileManager.write_file(data_file, buildings)
-
-    user_code = ''
-    data_file = ''
-    buildings = []
-
+    logout_user()
     return redirect('/')
 
 
 @app.route('/load', methods=['POST'])
 def load_buildings():
     """ Load buildings from external xml file """
+    if is_logged_out():
+        return redirect('/')
+
     filename = easygui.fileopenbox('File to load xml content from', 'Save file', filetypes=['xml'])
 
     loaded_buildings = FileManager.load_buildings_from_xml(filename)
@@ -152,6 +150,9 @@ def load_buildings():
 @app.route('/save', methods=['POST'])
 def save_buildings():
     """ Save buildings to external xml file """
+    if is_logged_out():
+        return redirect('/')
+
     filename = easygui.filesavebox('File to save xml content', 'Save file')
 
     FileManager.save_file_as_xml(filename, buildings)
@@ -163,51 +164,60 @@ def save_buildings():
 # Buildings
 ###########
 
-@app.route('/menu/building', methods=['POST'])
+@app.route('/menu/building/add', methods=['POST'])
 def add_building():
     """ Add new building """
-    buildings.append(Building('No street', 0))
+    if is_logged_out():
+        return redirect('/')
+
+    buildings.append(Building('', 0))
     return redirect(url_for('menu'))
 
 
-@app.route('/menu/building', methods=['DELETE'])
-def delete_building():
+@app.route('/menu/building/<building_id>/delete', methods=['POST'])
+def delete_building(building_id: str):
     """ Delete a building """
-    data = dict(request.form)
-    identifier = data['id'][0]
+    if is_logged_out():
+        return redirect('/')
 
     try:
-        building = get_building_by_id(identifier, buildings)
+        building = get_building_by_id(building_id, buildings)
+        buildings.remove(building)
+
     except ValueError as error:
         print(error, file=sys.stderr)
-        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
+        return render_template('error.html', error='Zlyhalo mazanie budovy')
 
-    buildings.remove(building)
-
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    return redirect(url_for('menu'))
 
 
-@app.route('/', methods=['PUT'])
-def update_buildings():
+@app.route('/menu/building/<building_id>/update', methods=['POST'])
+def update_buildings(building_id: str):
     """ Change building details """
-    data = dict(request.form)
-    identifier = data['id'][0]
-    street = data['street'][0].strip()
-    number = int(data['number'][0])
+    if is_logged_out():
+        return redirect('/')
 
     try:
-        building = get_building_by_id(identifier, buildings)
+        building = get_building_by_id(building_id, buildings)
+
+        street = request.form.get('street', default='', type=str)
+        number = request.form.get('number', default=0, type=int)
+
+        building.street = street
+        building.number = non_negative(number)
+
     except ValueError as error:
         print(error, file=sys.stderr)
-        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
+        return render_template('error.html', error='Zlyhalo update-ovanie budovy')
 
-    building.street = street
-    building.number = non_negative(number)
-
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    return redirect(url_for('menu'))
 
 
-@app.route('/building/<building_id>', methods=['GET'])
+###############
+# Building menu
+###############
+
+@app.route('/menu/building/<building_id>', methods=['GET'])
 def building_screen(building_id: str):
     """ Page showing fist building """
     building = get_building_by_id(building_id)
@@ -217,7 +227,7 @@ def building_screen(building_id: str):
                            dwellings=building.dwellings)
 
 
-@app.route('/building/<building_id>', methods=['POST'])
+@app.route('/menu/building/<building_id>', methods=['POST'])
 def add_dwelling(building_id: str):
     """ Adds dwelling to the building """
     building = get_building_by_id(building_id)
