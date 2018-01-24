@@ -2,7 +2,7 @@
 import atexit
 import sys
 
-from flask import render_template
+from flask import render_template, redirect, url_for
 
 from src import webapp
 from src.building import Building
@@ -38,6 +38,11 @@ def is_logged_out() -> bool:
 
 def logout_user():
     """ Logs out user out of the system """
+    clear_state()
+
+
+def clear_state():
+    """ Sets the webapp state to the initial """
     atexit._run_exitfuncs()
     atexit._clear()
 
@@ -45,11 +50,30 @@ def logout_user():
     webapp.data_file = ''
     webapp.buildings = []
 
+    webapp.filter = ''
+    webapp.sort_type = ''
 
-def error_checked(attempt: function(), error_message: str) -> any:
+
+def error_checked(attempt: callable, error_message: str, attempt_args: dict = None) -> any:
+    """ Executes function with logging and error callback """
     try:
-        return attempt()
+        if attempt_args:
+            return attempt(attempt_args)
+        else:
+            return attempt()
 
     except Exception as error:
         print(error, file=sys.stderr)
         return render_template('error.html', error=error_message)
+
+
+def redirect_with_query_params(function_name: str, **params):
+    """ Function with provided query params"""
+    if len(params) == 0:
+        return redirect(url_for(function_name))
+
+    query_params = []
+    for key, value in params.items():
+        query_params.append(f'{key}={value}')
+
+    return redirect(f'{url_for(function_name)}?{"&".join(query_params)}')

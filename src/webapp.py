@@ -2,20 +2,20 @@
 import os
 import sys
 
-import easygui
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for
+from flask import Flask, render_template, send_from_directory
 
 from src.building import Building
 from src.business import Business
-from src.dwelling import Dwelling
-from src.filemanager import FileManager
-from src.utilities import get_building_by_id, non_negative, is_logged_out, logout_user, error_checked
+from src.utilities import error_checked
 
 app = Flask(__name__, template_folder='../html')
 
 buildings: [Building] = []
-user_code: str = None
-data_file: str = None
+user_code: str = ''
+data_file: str = ''
+
+filter: str = ''
+sort_type: str = ''
 
 
 #########
@@ -90,150 +90,91 @@ def login():
 # Menu
 ######
 
-@app.route('/menu', methods=['GET', 'POST'])
+@app.route('/menu', methods=['GET'])
 def menu():
     """ Starting page for selecting building """
     return error_checked(Business.menu, 'Zlyhalo získavanie budov.')
 
 
-@app.route('/search', methods=['GET'])
-def search():
-    """ Returns only filtered out buildings """
-    if is_logged_out():
-        return redirect('/')
-
-    content = request.args.get('filter', default=None, type=str)
-
-    filtered_buildings = [building
-                          for building in buildings
-                          if content in building.street or content in str(building.number)]
-
-    return render_template('menu.html', buildings=filtered_buildings)
-
-
-@app.route('/sort', methods=['GET'])
-def sort():
-    """
-
-    :return:
-    """
-    pass
-
-
-@app.route('/logout', methods=['POST'])
+@app.route('/odhlasit', methods=['POST'])
 def logout():
     """ Returns only filtered out buildings """
-    if is_logged_out():
-        return redirect('/')
-
-    logout_user()
-    return redirect('/')
+    return error_checked(Business.logout, 'Zlyhalo odhlasovanie.')
 
 
-@app.route('/load', methods=['POST'])
+@app.route('/nacitat', methods=['POST'])
 def load_buildings():
     """ Load buildings from external xml file """
-    if is_logged_out():
-        return redirect('/')
-
-    filename = easygui.fileopenbox('File to load xml content from', 'Save file', filetypes=['xml'])
-
-    loaded_buildings = FileManager.load_buildings_from_xml(filename)
-
-    global buildings
-    if loaded_buildings:
-        buildings = loaded_buildings
-
-    return redirect(url_for('menu'))
+    return error_checked(Business.load_buildings, 'Zlyhalo načítanie z XML súboru.')
 
 
-@app.route('/save', methods=['POST'])
+@app.route('/ulozit', methods=['POST'])
 def save_buildings():
     """ Save buildings to external xml file """
-    if is_logged_out():
-        return redirect('/')
+    return error_checked(Business.save_buildings, 'Zlyhalo ukladanie XML súboru.')
 
-    filename = easygui.filesavebox('File to save xml content', 'Save file')
 
-    FileManager.save_file_as_xml(filename, buildings)
+@app.route('/menu/filter', methods=['POST'])
+def filter_buildings():
+    """ Set buildings filter """
+    return error_checked(Business.filter_buildings, 'Zlyhalo nastavovanie vyhľadávacieho filtera.')
 
-    return redirect(url_for('menu'))
+
+@app.route('/menu/triedit', methods=['POST'])
+def sort_buildings():
+    """ Set buildings sorting method """
+    return error_checked(Business.sort_buildings, 'Zlyhalo nastavenie triediacej podmienky.')
 
 
 ###########
 # Buildings
 ###########
 
-@app.route('/menu/building/add', methods=['POST'])
+@app.route('/menu/budova/pridat', methods=['POST'])
 def add_building():
     """ Add new building """
-    if is_logged_out():
-        return redirect('/')
-
-    buildings.append(Building('', 0))
-    return redirect(url_for('menu'))
+    return error_checked(Business.add_building, 'Zlyhalo vytvaranie novej budovy.')
 
 
-@app.route('/menu/building/<building_id>/delete', methods=['POST'])
+@app.route('/menu/budova/<building_id>/zmazat', methods=['POST'])
 def delete_building(building_id: str):
     """ Delete a building """
-    if is_logged_out():
-        return redirect('/')
-
-    try:
-        building = get_building_by_id(building_id, buildings)
-        buildings.remove(building)
-
-    except ValueError as error:
-        print(error, file=sys.stderr)
-        return render_template('error.html', error='Zlyhalo mazanie budovy')
-
-    return redirect(url_for('menu'))
+    return error_checked(Business.delete_building, 'Zlyhalo mazanie budovy.', {'building_id': building_id})
 
 
-@app.route('/menu/building/<building_id>/update', methods=['POST'])
+@app.route('/menu/budova/<building_id>/update', methods=['POST'])
 def update_buildings(building_id: str):
     """ Change building details """
-    if is_logged_out():
-        return redirect('/')
-
-    try:
-        building = get_building_by_id(building_id, buildings)
-
-        street = request.form.get('street', default='', type=str)
-        number = request.form.get('number', default=0, type=int)
-
-        building.street = street
-        building.number = non_negative(number)
-
-    except ValueError as error:
-        print(error, file=sys.stderr)
-        return render_template('error.html', error='Zlyhalo update-ovanie budovy')
-
-    return redirect(url_for('menu'))
+    return error_checked(Business.update_buildings, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
 
 ###############
 # Building menu
 ###############
 
-@app.route('/menu/building/<building_id>', methods=['GET'])
+@app.route('/menu/budova/<building_id>', methods=['GET'])
 def building_screen(building_id: str):
     """ Page showing fist building """
-    building = get_building_by_id(building_id)
-
-    return render_template('building.html',
-                           building=building,
-                           dwellings=building.dwellings)
+    return error_checked(Business.building_screen, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
 
-@app.route('/menu/building/<building_id>', methods=['POST'])
+@app.route('/menu/budova/<building_id>', methods=['POST'])
 def add_dwelling(building_id: str):
     """ Adds dwelling to the building """
-    building = get_building_by_id(building_id)
+    return error_checked(Business.add_dwelling, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
-    building.dwellings.append(Dwelling('A', 0, 0, 'A', 1))
 
-    return render_template('building.html',
-                           building=building,
-                           dwellings=building.dwellings)
+################
+# Error handling
+################
+
+@app.errorhandler(404)
+def page_not_found(error):
+    print(error, file=sys.stderr)
+    return render_template('error.html', error='404 Stránka sa nenašla.')
+
+
+@app.errorhandler(Exception)
+def webapp_error(error):
+    print(error, file=sys.stderr)
+    return render_template('error.html', error='500 Nastala chyba servera.')
