@@ -8,6 +8,7 @@ from src import webapp
 from src.building import Building
 from src.dwelling import Dwelling
 from src.filemanager import FileManager
+from src.sorter import Sorter
 from src.utilities import is_logged_out, logout_user, get_building_by_id, non_negative, redirect_with_query_params
 
 
@@ -45,16 +46,11 @@ class Business:
         buildings = webapp.buildings.copy()
 
         if webapp.filter:
-            buildings = [building for building in buildings if filter in str(building)]
+            buildings = [building for building in buildings if webapp.filter in str(building)]
 
-        if webapp.sort_type == 'meno-asc':
-            buildings.sort()
-        elif webapp.sort_type == 'meno-desc':
-            buildings.sort()
-        elif webapp.sort_type == 'cislo-asc':
-            buildings.sort()
-        elif webapp.sort_type == 'cislo-desc':
-            buildings.sort()
+        if webapp.sort_type:
+            sorter = Sorter()
+            sorter.sort_buildings(buildings, webapp.sort_type)
 
         return render_template('menu.html', buildings=buildings)
 
@@ -104,7 +100,13 @@ class Business:
     @staticmethod
     def sort_buildings():
         """ Set sort type for webapp """
-        sort_type = request.form.get('triedenie', default='', type=str)
+        previous_sort_type = webapp.sort_type
+        sort_type: str = request.form.get('triedenie', default='', type=str)
+
+        if f'{sort_type}-asc' == previous_sort_type:
+            sort_type = f'{sort_type}-desc'
+        else:
+            sort_type = f'{sort_type}-asc'
 
         return redirect_with_query_params('menu', filter=webapp.filter, triedenie=sort_type)
 
@@ -154,9 +156,7 @@ class Business:
         building_id = args['building_id']
         building = get_building_by_id(building_id, webapp.buildings)
 
-        return render_template('building.html',
-                               building=building,
-                               dwellings=building.dwellings)
+        return render_template('building.html', building=building, dwellings=building.dwellings)
 
     @staticmethod
     def add_dwelling(args: dict):
@@ -164,8 +164,6 @@ class Business:
         building_id = args['building_id']
         building = get_building_by_id(building_id, webapp.buildings)
 
-        building.dwellings.append(Dwelling('A', 0, 0, 'A', 1))
+        building.dwellings.append(Dwelling('', 0, 0, '', 1))
 
-        return render_template('building.html',
-                               building=building,
-                               dwellings=building.dwellings)
+        return render_template('building.html', building=building, dwellings=building.dwellings)

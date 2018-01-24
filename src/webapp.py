@@ -143,7 +143,7 @@ def delete_building(building_id: str):
 
 
 @app.route('/menu/budova/<building_id>/update', methods=['POST'])
-def update_buildings(building_id: str):
+def update_building(building_id: str):
     """ Change building details """
     return error_checked(Business.update_buildings, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
@@ -158,7 +158,7 @@ def building_screen(building_id: str):
     return error_checked(Business.building_screen, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
 
-@app.route('/menu/budova/<building_id>', methods=['POST'])
+@app.route('/menu/budova/<building_id>/pridat', methods=['POST'])
 def add_dwelling(building_id: str):
     """ Adds dwelling to the building """
     return error_checked(Business.add_dwelling, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})

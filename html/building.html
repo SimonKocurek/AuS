@@ -3,81 +3,92 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <meta name="description" content="">
-      <meta name="author" content="">
+      <meta name="description" content="Informačný systém pre na organizáciu ubytovania">
+      <meta name="author" content="Šimon Kocúrek">
 
       <title>Ubytovací informačný systém</title>
 
-      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <link rel="stylesheet" href="{{ url_for('bootstrap_styles') }}">
+      <link rel="stylesheet" href="{{ url_for('style') }}">
    </head>
 
-   <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-         <a class="navbar-brand" href="/">UiS</a>
-         <div class="dropdown mr-auto">
-            <a class="nav-link dropdown-toggle text-light" id="navbarDropdown" role="button" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
-               Export
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-               <a class="dropdown-item" onclick="saveAsXml()">Uložit ako XML</a>
-               <a class="dropdown-item" onclick="loadAsXml()">Otvozu ako XML</a>
-            </div>
-         </div>
-         <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-         </form>
-      </nav>
+   <body class="text-center">
 
-      <main role="main" class="container p-5">
-         <h1>{{ building.street }} {{ building.number }}</h1>
-         <ul>
-            {% for dwelling in dwellings %}
-            <li class="list-group-item">
+      <div class="container d-flex h-100 p-3 pt-5 mx-auto flex-column">
+
+         <nav class="navbar navbar-expand-md nav-masthead navbar-dark fixed-top blue-background">
+            <a href="javascript:void(0)"><h3 class="masthead-brand">UiS</h3></a>
+
+            <ul class="ml-5 navbar-nav mr-auto">
+               <li class="nav-item active">
+                  <a class="nav-link active" href="{{ url_for('menu') }}">Domov</a>
+               </li>
+
+               <li class="nav-item">
+                  <div class="dropdown">
+                     <a class="nav-item nav-link dropdown-toggle text-light" role="button" data-toggle="dropdown" href="javascript:void(0)">
+                        Súbor
+                     </a>
+                     <div class="dropdown-menu">
+                        <form class="dropdown-item" id="save_form" action="{{ url_for('load_buildings') }}" method="post">
+                           <a class="blue-text" href="javascript:$('#save_form').submit();">Uložiť, ako XML</a>
+                        </form>
+                        <div class="dropdown-divider"></div>
+                        <form class="dropdown-item" id="load_form" action="{{ url_for('save_buildings') }}" method="post">
+                           <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
+                        </form>
+                     </div>
+                  </div>
+               </li>
+
+               <li class="nav-item">
+                  <form id="logout_form" action="{{ url_for('logout') }}" method="post">
+                     <a class="nav-link" href="javascript:$('#logout_form').submit();">Odhlásiť</a>
+                  </form>
+               </li>
+            </ul>
+
+            <form class="form-inline mt-2 mt-md-0" action="{{ url_for('filter_buildings') }}" method="post">
+               <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search" required>
+               <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Hľadať</button>
+            </form>
+         </nav>
+
+         <main role="main" class="container p-5">
+            <h1>{{ building.street }} {{ building.number }}</h1>
+            <ul>
+               {% for dwelling in dwellings %}
+               <li class="list-group-item">
             <span>
-                {{ dwelling }}
+            {{ dwelling }}
             </span>
-               <span>
-                Free spaces: {{ dwelling.free_spaces() }}
+                  <span>
+            Free spaces: {{ dwelling.free_spaces() }}
             </span>
-               <ul>
-                  {% for person in dwelling.people %}
-                  <li>
-                     {{ person }}
-                  </li>
-                  {% endfor %}
-               </ul>
-            </li>
-            {% endfor %}
-            <li class="list-group-item">
-               <button class="btn btn-outline-danger" onclick="addDwelling()">+ Add Dwelling</button>
-            </li>
-         </ul>
-      </main>
+                  <ul>
+                     {% for person in dwelling.people %}
+                     <li>
+                        {{ person }}
+                     </li>
+                     {% endfor %}
+                  </ul>
+               </li>
+               {% endfor %}
+               <li class="list-group-item">
+                  <button class="btn btn-outline-danger" onclick="addDwelling()">+ Add Dwelling</button>
+               </li>
+            </ul>
+         </main>
 
-      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script>
-          function addDwelling(building) {
-              $.ajax({
-                  type: 'POST',
-                  url: location.href
-              });
+         <footer class="mastfoot mt-auto">
+            <div class="inner text-muted">
+               <p>Vytvorené pomocou <a class="blue-text" href="https://getbootstrap.com/">Bootstrap</a> frameworku.</p>
+            </div>
+         </footer>
+      </div>
 
-              location.reload();
-          }
-
-          function saveAsXml() {
-              location.href = 'http://localhost:5431/save';
-          }
-
-          function loadAsXml() {
-              location.href = 'http://localhost:5431/load';
-          }
-      </script>
+      <script src="{{ url_for('jquery') }}"></script>
+      <script src="{{ url_for('popper') }}"></script>
+      <script src="{{ url_for('bootstrap_javascript') }}"></script>
    </body>
 </html>

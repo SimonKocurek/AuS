@@ -1,7 +1,6 @@
 # coding=utf-8
 import math
 import uuid
-from collections import OrderedDict
 from functools import reduce
 
 from src.dwelling import Dwelling
@@ -14,9 +13,6 @@ class Building:
     def __init__(self, street: str, number: int, dwellings: [Dwelling] = None, identifier: str = None):
         if dwellings is None:
             dwellings = []
-
-        if street is None or len(street) == 0:
-            raise ValueError('You must provide a street name for the building')
 
         if number < 0:
             raise ValueError(f'You must provide non negative street number, got {number}')

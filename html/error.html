@@ -8,8 +8,8 @@
 
       <title>Ubytovací informačný systém</title>
 
-      <link rel="stylesheet" href="bootstrap.css">
-      <link rel="stylesheet" href="style.css">
+      <link rel="stylesheet" href="{{ url_for('bootstrap_styles') }}">
+      <link rel="stylesheet" href="{{ url_for('style') }}">
    </head>
 
    <body class="h-100 text-center text-white blue-background">
@@ -35,8 +35,8 @@
          </footer>
       </div>
 
-      <script src="jquery.js"></script>
-      <script src="popper.js"></script>
-      <script src="bootstrap.js"></script>
+      <script src="{{ url_for('jquery') }}"></script>
+      <script src="{{ url_for('popper') }}"></script>
+      <script src="{{ url_for('bootstrap_javascript') }}"></script>
    </body>
 </html>

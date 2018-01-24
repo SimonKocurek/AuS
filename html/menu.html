@@ -8,8 +8,8 @@
 
       <title>Ubytovací informačný systém</title>
 
-      <link rel="stylesheet" href="bootstrap.css">
-      <link rel="stylesheet" href="style.css">
+      <link rel="stylesheet" href="{{ url_for('bootstrap_styles') }}">
+      <link rel="stylesheet" href="{{ url_for('style') }}">
    </head>
 
    <body class="text-center">
@@ -30,11 +30,11 @@
                         Súbor
                      </a>
                      <div class="dropdown-menu">
-                        <form class="dropdown-item" id="save_form" action="{{ url_for('load_buildings') }}" method="post">
+                        <form class="dropdown-item" id="save_form" action="{{ url_for('save_buildings') }}" method="post">
                            <a class="blue-text" href="javascript:$('#save_form').submit();">Uložiť, ako XML</a>
                         </form>
                         <div class="dropdown-divider"></div>
-                        <form class="dropdown-item" id="load_form" action="{{ url_for('save_buildings') }}" method="post">
+                        <form class="dropdown-item" id="load_form" action="{{ url_for('load_buildings') }}" method="post">
                            <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
                         </form>
                      </div>
@@ -55,49 +55,58 @@
          </nav>
 
          <main class="container my-5">
-            <div class="container d-inline-flex p-2 mb-2 flex-row card text-dark">
-               <div class="">Triedenie:</div>
-               <a>Podľa mena</a>
-               <a>Podľa ulice</a>
+            <div class="container d-inline-flex p-3 mb-2 flex-row card text-dark px-4">
+               <div>Triedenie:</div>
 
-               <form id="filter_form" class="form-inline mt-2 mt-md-0" action="{{ url_for('sort_buildings') }}" method="post">
-                  <input class="form-control mr-sm-2" type="text" name="triedenie" placeholder="Poradie" aria-label="Search" required>
-                  <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Podľa ulice</button>
+               <form id="sort_name_asc" action="{{ url_for('sort_buildings') }}" method="post">
+                  <a class="blue-text mx-3" href="javascript:$('#sort_name_asc').submit();">Podľa mena</a>
+                  <input name="triedenie" value="meno" hidden>
+               </form>
+
+               <form id="sort_number_asc" action="{{ url_for('sort_buildings') }}" method="post">
+                  <a class="blue-text" href="javascript:$('#sort_number_asc').submit();">Podľa ulice</a>
+                  <input name="triedenie" value="cislo" hidden>
                </form>
             </div>
 
             <ul class="list-group form-group">
                {% for building in buildings %}
-               <li class="list-group-item">
+               <li class="list-group-item text-left">
 
-                  <form action="{{ url_for('delete_building', building_id=building.id) }}" method="post">
-                     <button type="submit" class="close">
-                        <span class="text-danger" aria-hidden="true">&times;</span>
-                     </button>
+                  <form id="building_{{ building.id }}"
+                        action="{{ url_for('update_building', building_id=building.id) }}"
+                        method="post"
+                        onblur="$('#building_{{ building.id }}').submit();">
+                     <div class="form-row">
+                        <div class="col">
+                           <label for="street_{{ building.id }}">Názov ulice:</label>
+                           <input class="form-control"
+                                  name="street"
+                                  placeholder="Moskovská"
+                                  value="{{ building.street }}"
+                                  id="street_{{ building.id }}">
+                        </div>
+                        <div class="col">
+                           <label for="number_{{ building.id }}">Číslo ulice:</label>
+                           <input class="form-control"
+                                  name="number"
+                                  type="number"
+                                  placeholder="472"
+                                  value="{{ building.number }}"
+                                  id="number_{{ building.id }}">
+                        </div>
+                     </div>
                   </form>
 
-                  <form id="building_{{ building.id }}" action="{{ url_for('building_screen', building_id=building.id) }}" method="post">
-                     <label for="street_{{ building.id }}">Ulica</label>
-                     <input class="form-control"
-                            name="street"
-                            placeholder="Meno ulice"
-                            value="{{ building.street }}"
-                            onblur="$('#building_{{ building.id }}').submit();"
-                            id="street_{{ building.id }}">
+                  <div class="row">
+                     <form action="{{ url_for('building_screen', building_id=building.id) }}" method="get">
+                        <button class="mx-3 mt-3 btn btn-outline-primary">Vybrať</button>
+                     </form>
 
-                     <label class="mt-2" for="number_{{ building.id }}">Číslo</label>
-                     <input class="form-control"
-                            name="number"
-                            type="number"
-                            placeholder="Číslo ulice"
-                            value="{{ building.number }}"
-                            onblur="$('#building_{{ building.id }}').submit();"
-                            id="number_{{ building.id }}">
-                  </form>
-
-                  <form action="{{ url_for('building_screen', building_id=building.id) }}" method="get">
-                     <button class="mt-3 btn btn-outline-light blue-background">Vybrať</button>
-                  </form>
+                     <form action="{{ url_for('delete_building', building_id=building.id) }}" method="post">
+                        <button class="mt-3 btn btn-outline-danger">Zmazať</button>
+                     </form>
+                  </div>
 
                </li>
                {% endfor %}
@@ -116,8 +125,8 @@
          </footer>
       </div>
 
-      <script src="jquery.js"></script>
-      <script src="popper.js"></script>
-      <script src="bootstrap.js"></script>
+      <script src="{{ url_for('jquery') }}"></script>
+      <script src="{{ url_for('popper') }}"></script>
+      <script src="{{ url_for('bootstrap_javascript') }}"></script>
    </body>
 </html>

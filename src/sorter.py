@@ -1,19 +1,37 @@
 # coding=utf-8
+from src.building import Building
+from src.dwelling import Dwelling
+
 
 class Sorter:
     """ Class managing different sorting types for data objects """
 
     def __init__(self):
+        self._sort_functions = {
+            'meno': lambda building: building.street,
+            'cislo': lambda building: building.number
+        }
 
-        if webapp.sort_type == 'meno-asc':
-            buildings.sort()
-        elif webapp.sort_type == 'meno-desc':
-            buildings.sort()
-        elif webapp.sort_type == 'cislo-asc':
-            buildings.sort()
-        elif webapp.sort_type == 'cislo-desc':
+        self._sort_orders = {
+            'asc': False,
+            'desc': True
+        }
 
-    def sort_buildings(self):
-        ut.sort(key=lambda x: x.count, reverse=True)
+    def sort_buildings(self, buildings: [Building], sort_type: str):
+        """
+        :param buildings:
+        :param sort_type:
+        :return:
+        """
+        sort_type_name = sort_type.split('-')[0]
+        sort_type_order = sort_type.split('-')[1]
 
-    def sort_dwellings(self):
+        buildings.sort(
+            key=self._sort_functions[sort_type_name],
+            reverse=self._sort_orders[sort_type_order]
+        )
+
+    def sort_dwellings(self, dwellings: [Dwelling], sort_type: str):
+        """
+        :return:
+        """
