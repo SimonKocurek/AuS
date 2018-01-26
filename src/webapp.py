@@ -1,12 +1,13 @@
 # coding=utf-8
 import os
 import sys
+import traceback
 
 from flask import Flask, render_template, send_from_directory
 
-from src.building import Building
 from src.business import Business
-from src.utilities import error_checked
+from src.entity.building import Building
+from src.utilities import checked
 
 app = Flask(__name__, template_folder='../html')
 
@@ -77,13 +78,13 @@ def popper():
 @app.route('/', methods=['GET'])
 def index():
     """ Intro page header """
-    return error_checked(Business.index, 'Zlyhalo získavanie úvodnej stránky.')
+    return checked(Business.index, 'Zlyhalo získavanie úvodnej stránky.', check_login=False)
 
 
 @app.route('/', methods=['POST'])
 def login():
     """ Logging using Intro page """
-    return error_checked(Business.login, 'Zlyhalo prihlasovanie.')
+    return checked(Business.login, 'Zlyhalo prihlasovanie.', check_login=False)
 
 
 ######
@@ -93,59 +94,55 @@ def login():
 @app.route('/menu', methods=['GET'])
 def menu():
     """ Starting page for selecting building """
-    return error_checked(Business.menu, 'Zlyhalo získavanie budov.')
+    return checked(Business.menu, 'Zlyhalo získavanie budov.')
 
 
 @app.route('/odhlasit', methods=['POST'])
 def logout():
     """ Returns only filtered out buildings """
-    return error_checked(Business.logout, 'Zlyhalo odhlasovanie.')
+    return checked(Business.logout, 'Zlyhalo odhlasovanie.')
 
 
 @app.route('/nacitat', methods=['POST'])
 def load_buildings():
     """ Load buildings from external xml file """
-    return error_checked(Business.load_buildings, 'Zlyhalo načítanie z XML súboru.')
+    return checked(Business.load_buildings, 'Zlyhalo načítanie z XML súboru.')
 
 
 @app.route('/ulozit', methods=['POST'])
 def save_buildings():
     """ Save buildings to external xml file """
-    return error_checked(Business.save_buildings, 'Zlyhalo ukladanie XML súboru.')
+    return checked(Business.save_buildings, 'Zlyhalo ukladanie XML súboru.')
 
 
 @app.route('/menu/filter', methods=['POST'])
 def filter_buildings():
     """ Set buildings filter """
-    return error_checked(Business.filter_buildings, 'Zlyhalo nastavovanie vyhľadávacieho filtera.')
+    return checked(Business.filter_buildings, 'Zlyhalo nastavovanie vyhľadávacieho filtera.')
 
 
 @app.route('/menu/triedit', methods=['POST'])
 def sort_buildings():
     """ Set buildings sorting method """
-    return error_checked(Business.sort_buildings, 'Zlyhalo nastavenie triediacej podmienky.')
+    return checked(Business.sort_buildings, 'Zlyhalo nastavenie triediacej podmienky.')
 
-
-###########
-# Buildings
-###########
 
 @app.route('/menu/budova/pridat', methods=['POST'])
 def add_building():
     """ Add new building """
-    return error_checked(Business.add_building, 'Zlyhalo vytvaranie novej budovy.')
+    return checked(Business.add_building, 'Zlyhalo vytvaranie novej budovy.')
 
 
 @app.route('/menu/budova/<building_id>/zmazat', methods=['POST'])
 def delete_building(building_id: str):
     """ Delete a building """
-    return error_checked(Business.delete_building, 'Zlyhalo mazanie budovy.', {'building_id': building_id})
+    return checked(Business.delete_building, 'Zlyhalo mazanie budovy.', {'building_id': building_id})
 
 
 @app.route('/menu/budova/<building_id>/update', methods=['POST'])
 def update_building(building_id: str):
     """ Change building details """
-    return error_checked(Business.update_buildings, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
+    return checked(Business.update_buildings, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
 
 ###############
@@ -154,14 +151,58 @@ def update_building(building_id: str):
 
 @app.route('/menu/budova/<building_id>', methods=['GET'])
 def building_screen(building_id: str):
-    """ Page showing fist building """
-    return error_checked(Business.building_screen, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
+    """ Page showing building detail """
+    return checked(Business.building_screen, 'Zlyhalo načítanie izieb budovy.', {'building_id': building_id})
 
+
+@app.route('/menu/budova/<building_id>/filter', methods=['POST'])
+def filter_dwellings(building_id: str):
+    """ Set dwelling filter """
+    return checked(Business.filter_dwellings, 'Zlyhalo nastavovanie vyhľadávacieho filtera.', {'building_id': building_id})
+
+
+@app.route('/menu/budova/<building_id>/triedit', methods=['POST'])
+def sort_dwellings(building_id: str):
+    """ Set dwelling sorting method """
+    return checked(Business.sort_dwellings, 'Zlyhalo nastavenie triediacej podmienky.', {'building_id': building_id})
+
+
+###########
+# Dwellings
+###########
 
 @app.route('/menu/budova/<building_id>/pridat', methods=['POST'])
 def add_dwelling(building_id: str):
     """ Adds dwelling to the building """
-    return error_checked(Business.add_dwelling, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
+    return checked(Business.add_dwelling, 'Zlyhala tvorba izby.', {'building_id': building_id})
+
+
+@app.route('/menu/budova/<building_id>/izba/<dwelling_id>/zmazat', methods=['POST'])
+def delete_dwelling(building_id: str, dwelling_id: str):
+    """ Delete a dwelling from building """
+    return checked(Business.delete_dwelling, 'Zlyhalo mazanie izby.', {'building_id': building_id, 'dwelling_id': dwelling_id})
+
+
+@app.route('/menu/budova/<building_id>/<dwelling_id>/update', methods=['POST'])
+def update_dwelling(building_id: str, dwelling_id: str):
+    """ Change dwelling details """
+    return checked(Business.update_dwelling, 'Zlyhala zmena údajov izby.', {'building_id': building_id, 'dwelling_id': dwelling_id})
+
+
+########
+# People
+########
+
+
+#################
+# Dwelling Screen
+#################
+
+
+@app.route('/menu/budova/<building_id>/izba/<dwelling_id>', methods=['GET'])
+def dwelling_screen(building_id: str, dwelling_id: str):
+    """ """
+    pass
 
 
 ################
@@ -171,10 +212,12 @@ def add_dwelling(building_id: str):
 @app.errorhandler(404)
 def page_not_found(error):
     print(error, file=sys.stderr)
+    traceback.print_exc()
     return render_template('error.html', error='404 Stránka sa nenašla.')
 
 
 @app.errorhandler(Exception)
 def webapp_error(error):
     print(error, file=sys.stderr)
+    traceback.print_exc()
     return render_template('error.html', error='500 Nastala chyba servera.')

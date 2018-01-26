@@ -1,11 +1,13 @@
 # coding=utf-8
 import atexit
 import sys
+import traceback
 
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect
 
 from src import webapp
-from src.building import Building
+from src.entity.building import Building
+from src.entity.dwelling import Dwelling
 
 
 def get_building_by_id(identifier: str, buildings: [Building]) -> Building:
@@ -22,11 +24,43 @@ def get_building_by_id(identifier: str, buildings: [Building]) -> Building:
     return building
 
 
+def get_building_from_args(args: dict) -> Building:
+    """ Extract building from dictionary containing needed identifiers """
+    building_id = args['building_id']
+    return get_building_by_id(building_id, webapp.buildings)
+
+
+def get_dwellings_from_args(args: dict) -> [Dwelling]:
+    """ Extract dwelling list from dictionary containing needed identifiers """
+    return get_building_from_args(args).dwellings
+
+
+def get_dwelling_from_args(args: dict) -> Dwelling:
+    """ Extract dwelling list from dictionary containing needed identifiers """
+    for dwelling in get_building_from_args(args).dwellings:
+        if dwelling.id == args['dwelling_id']:
+            return dwelling
+
+    raise IndexError
+
+
+def positive(number: int) -> int:
+    """
+    :return: Number, or 1 if number is negative or 0
+    """
+    return max(1, number)
+
+
 def non_negative(number: int) -> int:
     """
     :return: Number, or 0 if number is negative
     """
     return max(0, number)
+
+
+def non_numeric(string: str) -> str:
+    """ Removes all numbers from the string """
+    return ''.join(letter for letter in string if not letter.isdigit())
 
 
 def is_logged_out() -> bool:
@@ -54,9 +88,12 @@ def clear_state():
     webapp.sort_type = ''
 
 
-def error_checked(attempt: callable, error_message: str, attempt_args: dict = None) -> any:
+def checked(attempt: callable, error_message: str, attempt_args: dict = None, check_login=True) -> any:
     """ Executes function with logging and error callback """
     try:
+        if check_login and is_logged_out():
+            return redirect('/')
+
         if attempt_args:
             return attempt(attempt_args)
         else:
@@ -64,16 +101,17 @@ def error_checked(attempt: callable, error_message: str, attempt_args: dict = No
 
     except Exception as error:
         print(error, file=sys.stderr)
+        traceback.print_exc()
         return render_template('error.html', error=error_message)
 
 
-def redirect_with_query_params(function_name: str, **params):
-    """ Function with provided query params"""
+def redirect_with_query_params(url: str, **params):
+    """ Function with provided query params """
     if len(params) == 0:
-        return redirect(url_for(function_name))
+        return redirect(url)
 
     query_params = []
     for key, value in params.items():
         query_params.append(f'{key}={value}')
 
-    return redirect(f'{url_for(function_name)}?{"&".join(query_params)}')
+    return redirect(f'{ url }?{ "&".join(query_params) }')

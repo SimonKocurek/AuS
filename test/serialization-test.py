@@ -2,9 +2,9 @@
 import unittest
 from datetime import datetime
 
-from src.building import Building
-from src.dwelling import Dwelling
-from src.person import Person
+from src.entity.building import Building
+from src.entity.dwelling import Dwelling
+from src.entity.person import Person
 
 
 class SerializationTest(unittest.TestCase):

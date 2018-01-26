@@ -164,13 +164,7 @@ class Person:
         return hash(self._id)
 
     def __str__(self) -> str:
-        """Person details"""
-        return f'Name: {self.name}, ' \
-               f'Code: {self.code}, ' \
-               f'Gender: {self.gender}, ' \
-               f'Workspace: {self.workspace}, ' \
-               f'Date Of Birth: {self.date_of_birth}, ' \
-               f'Birthplace: {self.birthplace}, ' \
-               f'Added: {self.date_added}'
+        """Person Name"""
+        return self.name
 
     __repr__ = __str__

@@ -1,27 +1,24 @@
 # coding=utf-8
 import uuid
 
-from src.person import Person
+from src.entity.person import Person
 
 
 class Dwelling:
     """Class holding data about a one room"""
 
     def __init__(self,
-                 block: str,
-                 floor: int,
-                 cell: int,
-                 room: str,
-                 space: int,
+                 block: str = '',
+                 floor: int = 0,
+                 cell: int = 0,
+                 room: str = '',
+                 space: int = 1,
                  people: [Person] = None,
                  identifier: str = None):
         """Basic constructor"""
 
         if people is None:
             people = []
-
-        if len(block) != 1:
-            raise ValueError(f'Block should be one letter, but got {block}')
 
         if space <= 0:
             raise ValueError(f'Dwelling must be able to accommodate at least 1 person, but got {space}')
@@ -30,7 +27,7 @@ class Dwelling:
             identifier = str(uuid.uuid4())
 
         self._id = identifier
-        self._block = block.upper()
+        self._block = block
         self._floor = floor
         self._cell = cell
         self._room = room
@@ -158,7 +155,7 @@ class Dwelling:
         return Dwelling(
             json['block'],
             int(json['floor']),
-            int(json['cell']),
+            json['cell'],
             json['room'],
             int(json['space']),
             list(map(lambda person: Person.from_json(person), json['people'])),

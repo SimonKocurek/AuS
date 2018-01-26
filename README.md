@@ -9,14 +9,6 @@ web UI.
 
 ## Installation
 
-OS X & Linux, Windows:
-
-```sh
-python3 aus.py
-```
-
-## Development setup
-
 Before starting, you need to have at least Python 3.6 installed and then install
 all dependencies listed in the `requirements.txt`
 
@@ -24,12 +16,14 @@ all dependencies listed in the `requirements.txt`
 sudo apt install python3.6
 ```
 
+OS X & Linux, Windows:
+
+```sh
+python3 aus.py
+```
+
 ## Meta
 
 Šimon Kocúrek – simon.kocurek@gmail.com
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
-
-## Contributing
-
-Contributing for this project is disabled, as it's purely personal.

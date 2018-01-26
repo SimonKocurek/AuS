@@ -1,10 +1,7 @@
 # coding=utf-8
-import math
 import uuid
-from functools import reduce
 
-from src.dwelling import Dwelling
-from src.person import Person
+from src.entity.dwelling import Dwelling
 
 
 class Building:
@@ -55,71 +52,20 @@ class Building:
         """Get the buildings dwellings"""
         return self._dwellings
 
-    def filter_dwellings(self,
-                         block: str = None,
-                         floor: int = None,
-                         cell: int = None,
-                         room: str = None,
-                         space: int = None,
-                         people: [Person] = None,
-                         minimum_free_spaces: int = 0,
-                         maximum_free_spaces: int = math.inf) -> [Dwelling]:
+    def filter_dwellings(self, dwelling_filter: str) -> [Dwelling]:
         """
-        :param block: Block to find dwellings from
-        :param floor: Floor to find dwellings from
-        :param cell: Cell to find dwellings from
-        :param room: Find rooms with same id
-        :param space: Find rooms with same amount of space
-        :param people: Find dwellings these people live in
-        :param minimum_free_spaces: The lowest number of free spaces in a dwelling (inclusive)
-        :param maximum_free_spaces: The highest number of free spaces in a dwelling (inclusive)
         :return: Dwellings only matching provided parameters
         """
 
-        result = self.dwellings
-
-        if block:
-            result = list(filter(lambda dwelling: dwelling.block == block, result))
-
-        if floor:
-            result = list(filter(lambda dwelling: dwelling.floor == floor, result))
-
-        if cell:
-            result = list(filter(lambda dwelling: dwelling.cell == cell, result))
-
-        if room:
-            result = list(filter(lambda dwelling: dwelling.room == room, result))
-
-        if space:
-            result = list(filter(lambda dwelling: dwelling.space == space, result))
-
-        if people:
-            result = list(filter(lambda dwelling: self.contains_person(people), result))
-
-        if minimum_free_spaces:
-            result = list(filter(lambda dwelling: dwelling.free_spaces() >= minimum_free_spaces, result))
-
-        if maximum_free_spaces:
-            result = list(filter(lambda dwelling: dwelling.free_spaces() <= maximum_free_spaces, result))
-
-        return result
-
-    def contains_person(self, searched: [Person]) -> bool:
-        """
-        :return: Searched contains a person from people
-        """
-        for person in self.all_people():
-            if person in searched:
-                return True
-        return False
-
-    def all_people(self) -> [Person]:
-        """
-        :return: All people living in this building
-        """
-        return list(set(
-            reduce(lambda result, people: result + people, list(
-                map(lambda dwelling: dwelling.people, self._dwellings)))))
+        return list(
+            filter(
+                lambda dwelling:
+                dwelling_filter in str(dwelling) or
+                dwelling_filter in str(dwelling.free_spaces()) or
+                dwelling_filter in ''.join([str(person) for person in dwelling.people]),
+                self.dwellings
+            )
+        )
 
     def to_json(self) -> dict:
         """

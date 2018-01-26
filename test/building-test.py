@@ -2,9 +2,9 @@
 import unittest
 from datetime import datetime
 
-from src.building import Building
-from src.dwelling import Dwelling
-from src.person import Person
+from src.entity.building import Building
+from src.entity.dwelling import Dwelling
+from src.entity.person import Person
 
 
 class BuildingTest(unittest.TestCase):
@@ -20,12 +20,9 @@ class BuildingTest(unittest.TestCase):
 
         building = Building('Medická', 4, [dwelling, dwelling2, dwelling3])
 
-        self.assertSetEqual(set(building.all_people()), {person, person2, person3})
-        self.assertSetEqual(set(building.filter_dwellings(block='B')), {dwelling, dwelling2, dwelling3})
-        self.assertSetEqual(set(building.filter_dwellings(block='B', floor=3)), {dwelling, dwelling2})
-        self.assertSetEqual(set(building.filter_dwellings(block='B', floor=4)), {dwelling3})
-        self.assertSetEqual(set(building.filter_dwellings(minimum_free_spaces=2, maximum_free_spaces=-1)), set({}))
-        self.assertSetEqual(set(building.filter_dwellings(maximum_free_spaces=1)), {dwelling2})
+        self.assertSetEqual(set(building.filter_dwellings('B')), {dwelling, dwelling2, dwelling3})
+        self.assertSetEqual(set(building.filter_dwellings('20')), {dwelling, dwelling2})
+        self.assertSetEqual(set(building.filter_dwellings('4')), {dwelling3})
 
 
 if __name__ == '__main__':

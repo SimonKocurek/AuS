@@ -75,8 +75,7 @@
 
                   <form id="building_{{ building.id }}"
                         action="{{ url_for('update_building', building_id=building.id) }}"
-                        method="post"
-                        onblur="$('#building_{{ building.id }}').submit();">
+                        method="post">
                      <div class="form-row">
                         <div class="col">
                            <label for="street_{{ building.id }}">Názov ulice:</label>
@@ -84,6 +83,7 @@
                                   name="street"
                                   placeholder="Moskovská"
                                   value="{{ building.street }}"
+                                  onblur="$('#building_{{ building.id }}').submit();"
                                   id="street_{{ building.id }}">
                         </div>
                         <div class="col">
@@ -93,6 +93,7 @@
                                   type="number"
                                   placeholder="472"
                                   value="{{ building.number }}"
+                                  onblur="$('#building_{{ building.id }}').submit();"
                                   id="number_{{ building.id }}">
                         </div>
                      </div>
