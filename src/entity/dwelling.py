@@ -162,10 +162,10 @@ class Dwelling:
             json['id']
         )
 
-    def __gt__(self, other) -> bool:
+    def __lt__(self, other) -> bool:
         """Dwelling is sooner in alphabetical sorting"""
         return type(self) == type(other) and \
-               str(self) > str(other)
+               str(self) < str(other)
 
     def __eq__(self, other) -> bool:
         """Dwelling is same as parameter"""

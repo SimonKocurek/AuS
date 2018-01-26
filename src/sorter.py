@@ -14,7 +14,7 @@ class Sorter:
             'blok': lambda dwelling: dwelling.block,
             'poschodie': lambda dwelling: dwelling.floor,
             'bunka': lambda dwelling: dwelling.cell,
-            'volne_miesto': lambda dwelling: dwelling.free_spaces,
+            'volne_miesto': lambda dwelling: dwelling.free_spaces(),
             'pocet_ludi': lambda dwelling: len(dwelling.people)
         }
 

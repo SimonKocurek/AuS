@@ -213,6 +213,6 @@ class Business:
 
         return redirect_with_query_params(
             url_for('building_screen', building_id=args['building_id']),
-            filter=filter,
+            filter=webapp.filter,
             triedenie=webapp.sort_type
         )

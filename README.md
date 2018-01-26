@@ -14,16 +14,17 @@ all dependencies listed in the `requirements.txt`
 
 ```sh
 sudo apt install python3.6
+
+sudo pip3 install flask
+sudo pip3 install <other dependencies from requirenments.txt>
 ```
 
-OS X & Linux, Windows:
+Running:
 
 ```sh
 python3 aus.py
 ```
 
-## Meta
+----
 
-Šimon Kocúrek – simon.kocurek@gmail.com
-
-Distributed under the MIT license. See ``LICENSE`` for more information.
+Šimon Kocúrek – simon.kocurek@gmail.com - Distributed under the MIT license.

@@ -48,7 +48,7 @@
                </li>
             </ul>
 
-            <form class="form-inline mt-2 mt-md-0" action="{{ url_for('filter_buildings') }}" method="post">
+            <form class="form-inline mt-2 mt-md-0" action="{{ url_for('filter_dwellings', building_id=building.id) }}" method="post">
                <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search" required>
                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Hľadať</button>
             </form>
@@ -60,29 +60,29 @@
             <div class="container d-inline-flex p-3 mb-2 flex-row card text-dark px-4">
                <div>Triedenie:</div>
 
-               <form id="sort_block" action="{{ url_for('sort_buildings') }}" method="post">
-                  <a class="blue-text mx-3" href="javascript:$('#sort_block').submit();">Podľa bloku</a>
-                  <input name="triedenie" value="meno" hidden>
+               <form id="sort_block" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
+                  <a class="blue-text mx-3" href="javascript:$('#sort_block').submit();">Blok</a>
+                  <input name="triedenie" value="blok" hidden>
                </form>
 
-               <form id="sort_floor" action="{{ url_for('sort_buildings') }}" method="post">
-                  <a class="blue-text" href="javascript:$('#sort_floor').submit();">Podľa poschodia</a>
-                  <input name="triedenie" value="cislo" hidden>
+               <form id="sort_floor" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
+                  <a class="blue-text" href="javascript:$('#sort_floor').submit();">Poschodie</a>
+                  <input name="triedenie" value="poschodie" hidden>
                </form>
 
-               <form id="sort_cell" action="{{ url_for('sort_buildings') }}" method="post">
-                  <a class="blue-text" href="javascript:$('#sort_cell').submit();">Podľa bunky</a>
-                  <input name="triedenie" value="cislo" hidden>
+               <form id="sort_cell" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
+                  <a class="blue-text mx-3" href="javascript:$('#sort_cell').submit();">Bunka</a>
+                  <input name="triedenie" value="bunka" hidden>
                </form>
 
-               <form id="sort_free_space" action="{{ url_for('sort_buildings') }}" method="post">
-                  <a class="blue-text" href="javascript:$('#sort_free_space').submit();">Podľa voľného miesta</a>
-                  <input name="triedenie" value="cislo" hidden>
+               <form id="sort_free_space" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
+                  <a class="blue-text" href="javascript:$('#sort_free_space').submit();">Voľnéhé miesto</a>
+                  <input name="triedenie" value="volne_miesto" hidden>
                </form>
 
-               <form id="sort_people" action="{{ url_for('sort_buildings') }}" method="post">
-                  <a class="blue-text" href="javascript:$('#sort_people').submit();">Podľa počtu ľudí</a>
-                  <input name="triedenie" value="cislo" hidden>
+               <form id="sort_people" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
+                  <a class="blue-text mx-3" href="javascript:$('#sort_people').submit();">Počet ľudí</a>
+                  <input name="triedenie" value="pocet_ludi" hidden>
                </form>
             </div>
 
