@@ -134,10 +134,17 @@ class Business:
         return redirect_with_query_params(url_for('menu'), filter=webapp.filter, triedenie=webapp.sort_type)
 
     @staticmethod
-    def building_screen(args: dict):
+    def building_screen(args: dict, filter=None, sort_type=None):
         """ Page showing fist building """
-        webapp.filter = request.args.get('filter', default='', type=str)
-        webapp.sort_type = request.args.get('triedenie', default='', type=str)
+        if filter is None:
+            webapp.filter = request.args.get('filter', default='', type=str)
+        else:
+            webapp.filter = filter
+
+        if sort_type is None:
+            webapp.sort_type = request.args.get('triedenie', default='', type=str)
+        else:
+            webapp.sort_type = sort_type
 
         building = get_building_from_args(args)
         dwellings = get_dwellings_from_args(args).copy()
@@ -162,22 +169,14 @@ class Business:
         else:
             sort_type = f'{sort_type}-asc'
 
-        return redirect_with_query_params(
-            url_for('building_screen', building_id=args['building_id']),
-            filter=webapp.filter,
-            triedenie=sort_type
-        )
+        return Business.building_screen(args, sort_type=sort_type)
 
     @staticmethod
     def filter_dwellings(args: dict):
         """ Set search filter for webapp """
         filter = request.form.get('filter', default='', type=str)
 
-        return redirect_with_query_params(
-            url_for('building_screen', building_id=args['building_id']),
-            filter=filter,
-            triedenie=webapp.sort_type
-        )
+        return Business.building_screen(args, filter=filter)
 
     @staticmethod
     def add_dwelling(args: dict):
@@ -185,11 +184,7 @@ class Business:
         building = get_building_from_args(args)
         building.dwellings.append(Dwelling())
 
-        return redirect_with_query_params(
-            url_for('building_screen', building_id=args['building_id']),
-            filter=webapp.filter,
-            triedenie=webapp.sort_type
-        )
+        return Business.building_screen(args)
 
     @staticmethod
     def update_dwelling(args: dict):
@@ -222,11 +217,7 @@ class Business:
 
         dwellings.remove(removed_dwelling)
 
-        return redirect_with_query_params(
-            url_for('building_screen', building_id=args['building_id']),
-            filter=webapp.filter,
-            triedenie=webapp.sort_type
-        )
+        return Business.building_screen(args)
 
     @staticmethod
     def dwelling_screen(args: dict):

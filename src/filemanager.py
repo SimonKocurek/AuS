@@ -3,7 +3,6 @@ import os
 import sys
 import traceback
 
-import easygui
 import xmltodict
 from dict2xml import dict2xml
 from flask import json
@@ -126,4 +125,3 @@ class FileManager:
         except Exception as error:
             print(error_message, error, file=sys.stderr)
             traceback.print_exc()
-            easygui.msgbox(error_message, 'Error')

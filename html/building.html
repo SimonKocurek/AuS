@@ -30,12 +30,12 @@
                         Súbor
                      </a>
                      <div class="dropdown-menu">
-                        <form class="dropdown-item" id="save_form" action="{{ url_for('save_buildings') }}" method="post">
-                           <a class="blue-text" href="javascript:$('#save_form').submit();">Uložiť, ako XML</a>
+                        <form class="dropdown-item" id="save_form">
+                           <a class="blue-text" href="javascript:saveXml();">Uložiť, ako XML</a>
                         </form>
                         <div class="dropdown-divider"></div>
-                        <form class="dropdown-item" id="load_form" action="{{ url_for('load_buildings') }}" method="post">
-                           <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
+                        <form class="dropdown-item" id="load_form">
+                           <a class="blue-text" href="javascript:loadXml()">Načítať, XML</a>
                         </form>
                      </div>
                   </div>
@@ -48,8 +48,8 @@
                </li>
             </ul>
 
-            <form class="form-inline mt-2 mt-md-0" action="{{ url_for('filter_dwellings', building_id=building.id) }}" method="post">
-               <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search" required>
+            <form class="form-inline mt-2 mt-md-0" id="filter_form" action="javascript:filterDwellings('{{ building.id }}')">
+               <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search">
                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Hľadať</button>
             </form>
          </nav>
@@ -69,36 +69,36 @@
             <div class="container d-inline-flex p-3 mb-2 flex-row card text-dark px-4">
                <div>Triedenie:</div>
 
-               <form id="sort_block" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
-                  <a class="blue-text mx-3" href="javascript:$('#sort_block').submit();">Blok</a>
+               <form id="sort_block">
+                  <a class="blue-text mx-3" href="javascript:sortDwellings('{{ building.id }}', '#sort_block')">Blok</a>
                   <input name="triedenie" value="blok" hidden>
                </form>
 
-               <form id="sort_floor" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
-                  <a class="blue-text" href="javascript:$('#sort_floor').submit();">Poschodie</a>
+               <form id="sort_floor">
+                  <a class="blue-text" href="javascript:sortDwellings('{{ building.id }}','#sort_floor')">Poschodie</a>
                   <input name="triedenie" value="poschodie" hidden>
                </form>
 
-               <form id="sort_cell" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
-                  <a class="blue-text mx-3" href="javascript:$('#sort_cell').submit();">Bunka</a>
+               <form id="sort_cell">
+                  <a class="blue-text mx-3" href="javascript:sortDwellings('{{ building.id }}','#sort_cell')">Bunka</a>
                   <input name="triedenie" value="bunka" hidden>
                </form>
 
-               <form id="sort_free_space" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
-                  <a class="blue-text" href="javascript:$('#sort_free_space').submit();">Voľnéhé miesto</a>
+               <form id="sort_free_space">
+                  <a class="blue-text" href="javascript:sortDwellings('{{ building.id }}','#sort_free_space')">Voľnéhé miesto</a>
                   <input name="triedenie" value="volne_miesto" hidden>
                </form>
 
-               <form id="sort_people" action="{{ url_for('sort_dwellings', building_id=building.id) }}" method="post">
-                  <a class="blue-text mx-3" href="javascript:$('#sort_people').submit();">Počet ľudí</a>
+               <form id="sort_people">
+                  <a class="blue-text mx-3" href="javascript:sortDwellings('{{ building.id }}','#sort_people')">Počet ľudí</a>
                   <input name="triedenie" value="pocet_ludi" hidden>
                </form>
             </div>
 
-            <ul class="list-group form-group">
+            <ul class="list-group form-group" id="dwelling_list">
                <li class="list-group-item text-right p-1">
-                  <form id="new_dwelling_form" action="{{ url_for('add_dwelling', building_id=building.id) }}" method="post">
-                     <button class="btn btn-outline-light blue-background" href="javascript:$('#new_dwelling_form').submit();">+ Pridať izbu</button>
+                  <form id="new_dwelling_form">
+                     <a class="btn btn-outline-light blue-background" href="javascript:addDwelling('{{ building.id }}')">+ Pridať izbu</a>
                   </form>
                </li>
 
@@ -123,9 +123,7 @@
                      </div>
                   </div>
 
-                  <form id="dwelling_{{ dwelling.id }}"
-                        action="{{ url_for('update_dwelling', building_id=building.id, dwelling_id=dwelling.id) }}"
-                        method="post">
+                  <form id="dwelling_{{ dwelling.id }}">
 
                      <div class="form-row">
                         <div class="col">
@@ -133,36 +131,36 @@
                            <input class="form-control"
                                   name="block"
                                   value="{{ dwelling.block }}"
-                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}')"
                                   id="block_{{ dwelling.id }}">
                         </div>
 
                         <div class="col">
-                           <label for="floor_{{ building.id }}">Poschodie:</label>
+                           <label for="floor_{{ dwelling.id }}">Poschodie:</label>
                            <input class="form-control"
                                   name="floor"
                                   type="number"
                                   value="{{ dwelling.floor }}"
-                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
-                                  id="floor_{{ building.id }}">
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}')"
+                                  id="floor_{{ dwelling.id }}">
                         </div>
 
                         <div class="col">
-                           <label for="cell_{{ building.id }}">Bunka izby:</label>
+                           <label for="cell_{{ dwelling.id }}">Bunka:</label>
                            <input class="form-control"
                                   name="cell"
                                   value="{{ dwelling.cell }}"
-                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
-                                  id="cell_{{ building.id }}">
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}')"
+                                  id="cell_{{ dwelling.id }}">
                         </div>
 
                         <div class="col">
-                           <label for="room_{{ building.id }}">Izba bunky:</label>
+                           <label for="room_{{ dwelling.id }}">Izba bunky:</label>
                            <input class="form-control"
                                   name="room"
                                   value="{{ dwelling.room }}"
-                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
-                                  id="room_{{ building.id }}">
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}')"
+                                  id="room_{{ dwelling.id }}">
                         </div>
                      </div>
                   </form>
@@ -172,7 +170,7 @@
                         <button class="mx-3 mt-3 btn btn-outline-primary">Detail</button>
                      </form>
 
-                     <form action="{{ url_for('delete_dwelling', building_id=building.id, dwelling_id=dwelling.id) }}" method="post">
+                     <form action="javascript:deleteDwelling('{{ building.id }}', '{{ dwelling.id }}')">
                         <button class="mt-3 btn btn-outline-danger">Zmazať</button>
                      </form>
                   </div>
@@ -192,6 +190,7 @@
       {{ JSGlue.include() }}
       <script type="text/javascript" src="{{ url_for('jquery') }}"></script>
       <script type="text/javascript" src="{{ url_for('popper') }}"></script>
+      <script type="text/javascript" src="{{ url_for('noty') }}"></script>
       <script type="text/javascript" src="{{ url_for('bootstrap_javascript') }}"></script>
       <script type="text/javascript" src="{{ url_for('building_javascript') }}"></script>
    </body>

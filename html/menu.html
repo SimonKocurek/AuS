@@ -31,11 +31,11 @@
                      </a>
                      <div class="dropdown-menu">
                         <form class="dropdown-item" id="save_form">
-                           <a class="blue-text" href="javascript:saveBuildings();">Uložiť, ako XML</a>
+                           <a class="blue-text" href="javascript:saveXml();">Uložiť, ako XML</a>
                         </form>
                         <div class="dropdown-divider"></div>
                         <form class="dropdown-item" id="load_form">
-                           <a class="blue-text" href="javascript:loadBuildings()">Načítať, XML</a>
+                           <a class="blue-text" href="javascript:loadXml()">Načítať, XML</a>
                         </form>
                      </div>
                   </div>
@@ -49,7 +49,7 @@
             </ul>
 
             <form class="form-inline mt-2 mt-md-0" id="filter_form" action="javascript:filterBuildings()">
-               <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search" required>
+               <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search">
                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Hľadať</button>
             </form>
          </nav>

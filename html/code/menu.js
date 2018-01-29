@@ -42,7 +42,7 @@ $(document).ready(function () {
     };
 });
 
-function saveBuildings() {
+function saveXml() {
     $.ajax({
         url: Flask.url_for('save_buildings'),
         type: 'post',
@@ -54,26 +54,26 @@ function saveBuildings() {
             $('.dropdown-toggle').dropdown('toggle');
 
             noty({
-                text: 'Zlyhalo ukladanie budov.'
+                text: 'Zlyhalo ukladanie XML súboru.'
             });
         }
     });
 }
 
-function loadBuildings() {
+function loadXml() {
     $.ajax({
         url: Flask.url_for('load_buildings'),
         type: 'post',
         dataType: 'html',
         success: function (response) {
             $('.dropdown-toggle').dropdown('toggle');
-            replaceBuldingList(response)
+            replaceBuildingList(response)
         },
         error: function (error) {
             $('.dropdown-toggle').dropdown('toggle');
 
             noty({
-                text: 'Zlyhalo načítavanie budov.'
+                text: 'Zlyhalo načítavanie XML súboru.'
             });
         }
     });
@@ -86,7 +86,7 @@ function filterBuildings() {
         dataType: 'html',
         data: $('#filter_form').serialize(),
         success: function (response) {
-            replaceBuldingList(response)
+            replaceBuildingList(response)
         },
         error: function (error) {
             noty({
@@ -103,7 +103,7 @@ function sortBuildings(sortForm) {
         dataType: 'html',
         data: $(sortForm).serialize(),
         success: function (response) {
-            replaceBuldingList(response)
+            replaceBuildingList(response)
         },
         error: function (error) {
             alert('Zlyhalo triedenie budov.')
@@ -117,7 +117,7 @@ function addBuilding() {
         type: 'post',
         dataType: 'html',
         success: function (response) {
-            replaceBuldingList(response)
+            replaceBuildingList(response)
         },
         error: function (error) {
             noty({
@@ -165,7 +165,7 @@ function deleteBuilding(buildingId) {
         type: 'post',
         dataType: 'html',
         success: function (response) {
-            replaceBuldingList(response)
+            replaceBuildingList(response)
         },
         error: function (error) {
             noty({
@@ -175,7 +175,7 @@ function deleteBuilding(buildingId) {
     });
 }
 
-function replaceBuldingList(html) {
-    var new_building_list = $(html).find('#building_list');
-    $('#building_list').replaceWith(new_building_list);
+function replaceBuildingList(html) {
+    var newBuildingList = $(html).find('#building_list');
+    $('#building_list').replaceWith(newBuildingList);
 }

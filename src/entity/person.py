@@ -22,7 +22,7 @@ class Person:
         if gender not in ['m', 'f']:
             raise ValueError(f'Person must have a one letter gender [m, f], but got {gender}')
 
-        if not id or not id.strip():
+        if id is None or len(id.strip()) == 0:
             id = str(uuid.uuid4())
 
         if not date_of_birth:
@@ -72,7 +72,7 @@ class Person:
     @property
     def gender(self) -> str:
         """Get the person name """
-        return self._name
+        return self._gender
 
     @gender.setter
     def gender(self, value: str) -> None:

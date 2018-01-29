@@ -30,12 +30,12 @@
                         Súbor
                      </a>
                      <div class="dropdown-menu">
-                        <form class="dropdown-item" id="save_form" action="{{ url_for('save_buildings') }}" method="post">
-                           <a class="blue-text" href="javascript:$('#save_form').submit();">Uložiť, ako XML</a>
+                        <form class="dropdown-item" id="save_form">
+                           <a class="blue-text" href="javascript:saveXml();">Uložiť, ako XML</a>
                         </form>
                         <div class="dropdown-divider"></div>
-                        <form class="dropdown-item" id="load_form" action="{{ url_for('load_buildings') }}" method="post">
-                           <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
+                        <form class="dropdown-item" id="load_form">
+                           <a class="blue-text" href="javascript:loadXml()">Načítať, XML</a>
                         </form>
                      </div>
                   </div>
@@ -183,6 +183,7 @@
       {{ JSGlue.include() }}
       <script type="text/javascript" src="{{ url_for('jquery') }}"></script>
       <script type="text/javascript" src="{{ url_for('popper') }}"></script>
+      <script type="text/javascript" src="{{ url_for('noty') }}"></script>
       <script type="text/javascript" src="{{ url_for('bootstrap_javascript') }}"></script>
       <script type="text/javascript" src="{{ url_for('dwelling_javascript') }}"></script>
    </body>

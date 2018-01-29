@@ -78,7 +78,7 @@ def noty():
     """
     :return: Notty javascript notifications code
     """
-    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'noty.js')
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'noty.min.js')
 
 
 @app.route('/menu.js')
