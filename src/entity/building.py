@@ -96,9 +96,9 @@ class Building:
             json['id']
         )
 
-    def __ge__(self, other) -> bool:
+    def __lt__(self, other) -> bool:
         """The name of the building is sooner after alphabetical sort"""
-        return str(self) > str(other)
+        return str(self) < str(other)
 
     def __eq__(self, other) -> bool:
         """Building is same"""

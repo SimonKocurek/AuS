@@ -55,6 +55,15 @@ body {
     color: #3dbfff;
 }
 
+.blue-text:focus, .blue-text:hover {
+    color: #38a8e1;
+}
+
+.highlight-text {
+    font-weight: 300;
+    font-size: 22px;
+}
+
 .cover-container {
     max-width: 42em;
 }

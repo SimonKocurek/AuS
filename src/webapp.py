@@ -60,7 +60,7 @@ def jquery():
     """
     :return: Jquery code
     """
-    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'jquery-3.2.1.slim.min.js')
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'jquery-3.3.1.min.js')
 
 
 @app.route('/popper.js')
@@ -69,6 +69,30 @@ def popper():
     :return: Popper code
     """
     return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'popper.min.js')
+
+
+@app.route('/menu.js')
+def menu_script():
+    """
+    :return: Menu javascript code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'code'), 'menu.js')
+
+
+@app.route('/building.js')
+def building_script():
+    """
+    :return: Building javascript code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'code'), 'building.js')
+
+
+@app.route('/dwelling.js')
+def dwelling_script():
+    """
+    :return: Dwelling javascript code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'code'), 'dwelling.js')
 
 
 #######
@@ -189,20 +213,49 @@ def update_dwelling(building_id: str, dwelling_id: str):
     return checked(Business.update_dwelling, 'Zlyhala zmena údajov izby.', {'building_id': building_id, 'dwelling_id': dwelling_id})
 
 
+#################
+# Dwelling Screen
+#################
+
+@app.route('/menu/budova/<building_id>/izba/<dwelling_id>', methods=['GET'])
+def dwelling_screen(building_id: str, dwelling_id: str):
+    """ Show details about dwelling """
+    return checked(Business.dwelling_screen, 'Zlyhala zobrazovanie detailu izby.', {'building_id': building_id, 'dwelling_id': dwelling_id})
+
+
 ########
 # People
 ########
 
 
-#################
-# Dwelling Screen
-#################
+@app.route('/menu/budova/<building_id>/izba/<dwelling_id>/pridaj_cloveka', methods=['POST'])
+def add_person(building_id: str, dwelling_id: str):
+    """ Add person to a dwelling """
+    return checked(
+        Business.add_person,
+        'Zlyhalo pridávanie ľudí.',
+        {'building_id': building_id, 'dwelling_id': dwelling_id}
+    )
 
 
-@app.route('/menu/budova/<building_id>/izba/<dwelling_id>', methods=['GET'])
-def dwelling_screen(building_id: str, dwelling_id: str):
-    """ """
-    pass
+@app.route('/menu/budova/<building_id>/izba/<dwelling_id>/clovek/<person_id>', methods=['POST'])
+def update_person(building_id: str, dwelling_id: str, person_id: str):
+    """ Change person data """
+    return checked(
+        Business.update_person,
+        'Zlyhala zmena údajov ubytovaného.',
+        {'building_id': building_id, 'dwelling_id': dwelling_id, 'person_id': person_id}
+    )
+
+
+@app.route('/menu/budova/<building_id>/izba/<dwelling_id>/clovek/<person_id>/vyhod_cloveka', methods=['POST'])
+def remove_person(building_id: str, dwelling_id: str, person_id: str):
+    """ Remove a person from dwelling """
+    return checked(
+        Business.remove_person,
+        'Zlyhalo mazanie ubytovaného.',
+        {'building_id': building_id, 'dwelling_id': dwelling_id, 'person_id': person_id}
+    )
 
 
 ################

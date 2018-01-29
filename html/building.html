@@ -55,7 +55,16 @@
          </nav>
 
          <main class="container my-5">
-            <h1>{{ building.street }} {{ building.number }}</h1>
+            <h1 class="text-left pl-3">
+               <a title="Naspäť"
+                  href="{{ url_for('menu') }}"
+                  class="blue-text">
+                  <
+               </a>
+               <span>
+               {{ building.street }} {{ building.number }}
+               </span>
+            </h1>
 
             <div class="container d-inline-flex p-3 mb-2 flex-row card text-dark px-4">
                <div>Triedenie:</div>
@@ -89,6 +98,25 @@
             <ul class="list-group form-group">
                {% for dwelling in dwellings %}
                <li class="list-group-item text-left">
+                  <div class="form-row pb-1 highlight-text">
+                     <div class="col-3 px-1">
+                        <span>
+                           Voľných Miest:
+                        </span>
+                        <span class="blue-text font-weight-normal">
+                           {{ dwelling.free_spaces() }}
+                        </span>
+                     </div>
+                     <div class="col-3 px-1">
+                        <span>
+                           Ubytovaných:
+                        </span>
+                        <span class="blue-text font-weight-normal">
+                           {{ dwelling.people.__len__() }}
+                        </span>
+                     </div>
+                  </div>
+
                   <form id="dwelling_{{ dwelling.id }}"
                         action="{{ url_for('update_dwelling', building_id=building.id, dwelling_id=dwelling.id) }}"
                         method="post">
@@ -98,7 +126,6 @@
                            <label for="block_{{ dwelling.id }}">Blok budovy:</label>
                            <input class="form-control"
                                   name="block"
-                                  placeholder="B"
                                   value="{{ dwelling.block }}"
                                   onblur="$('#dwelling_{{ dwelling.id }}').submit();"
                                   id="block_{{ dwelling.id }}">
@@ -109,7 +136,6 @@
                            <input class="form-control"
                                   name="floor"
                                   type="number"
-                                  placeholder="1"
                                   value="{{ dwelling.floor }}"
                                   onblur="$('#dwelling_{{ dwelling.id }}').submit();"
                                   id="floor_{{ building.id }}">
@@ -119,7 +145,6 @@
                            <label for="cell_{{ building.id }}">Bunka izby:</label>
                            <input class="form-control"
                                   name="cell"
-                                  placeholder="25"
                                   value="{{ dwelling.cell }}"
                                   onblur="$('#dwelling_{{ dwelling.id }}').submit();"
                                   id="cell_{{ building.id }}">
@@ -129,39 +154,11 @@
                            <label for="room_{{ building.id }}">Izba bunky:</label>
                            <input class="form-control"
                                   name="room"
-                                  placeholder="A"
                                   value="{{ dwelling.room }}"
                                   onblur="$('#dwelling_{{ dwelling.id }}').submit();"
                                   id="room_{{ building.id }}">
                         </div>
                      </div>
-
-                     <div class="form-row">
-                        <div class="col">
-                           <label for="space_{{ dwelling.id }}">Priestor izby:</label>
-                           <input class="form-control"
-                                  name="space"
-                                  type="number"
-                                  placeholder="3"
-                                  value="{{ dwelling.space }}"
-                                  onblur="$('#dwelling_{{ dwelling.id }}').submit();"
-                                  id="space_{{ dwelling.id }}">
-                        </div>
-
-                        <div class="col">
-                           Volne miesta: {{ dwelling.free_spaces() }}
-                        </div>
-
-                     </div>
-
-
-                     <!--<ul>-->
-                     <!--{% for person in dwelling.people %}-->
-                     <!--<li>-->
-                     <!--{{ person }}-->
-                     <!--</li>-->
-                     <!--{% endfor %}-->
-                     <!--</ul>-->
                   </form>
 
                   <div class="row">

@@ -145,10 +145,10 @@ class Person:
             identifier=json['id']
         )
 
-    def __ge__(self, other) -> bool:
+    def __lt__(self, other) -> bool:
         """Person is sooner in alphabetical sorting of names"""
         return type(self) == type(other) and \
-               self.name > other.name
+               self.name < other.name
 
     def __eq__(self, other) -> bool:
         """Parameter is the same person"""

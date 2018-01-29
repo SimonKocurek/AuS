@@ -81,7 +81,6 @@
                            <label for="street_{{ building.id }}">Názov ulice:</label>
                            <input class="form-control"
                                   name="street"
-                                  placeholder="Moskovská"
                                   value="{{ building.street }}"
                                   onblur="$('#building_{{ building.id }}').submit();"
                                   id="street_{{ building.id }}">
@@ -91,7 +90,6 @@
                            <input class="form-control"
                                   name="number"
                                   type="number"
-                                  placeholder="472"
                                   value="{{ building.number }}"
                                   onblur="$('#building_{{ building.id }}').submit();"
                                   id="number_{{ building.id }}">

@@ -2,7 +2,7 @@
 import atexit
 
 import easygui
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, jsonify
 
 from src import webapp
 from src.entity.building import Building
@@ -73,7 +73,7 @@ class Business:
 
         FileManager.save_file_as_xml(filename, webapp.buildings)
 
-        return redirect_with_query_params(url_for('menu'), filter=webapp.filter, triedenie=webapp.sort_type)
+        return jsonify({'result': 'success'})
 
     @staticmethod
     def filter_buildings():
@@ -210,6 +210,46 @@ class Business:
         removed_dwelling = get_dwelling_from_args(args)
 
         dwellings.remove(removed_dwelling)
+
+        return redirect_with_query_params(
+            url_for('building_screen', building_id=args['building_id']),
+            filter=webapp.filter,
+            triedenie=webapp.sort_type
+        )
+
+    @staticmethod
+    def dwelling_screen(args: dict):
+        """ Show details about dwelling """
+        building = get_building_from_args(args)
+        dwelling = get_dwelling_from_args(args)
+
+        return render_template('dwelling.html', building=building, dwelling=dwelling)
+
+    @staticmethod
+    def add_person(args: dict):
+        """ Add person to a dwelling """
+        return checked(
+            Business.add_person,
+            'Zlyhalo pridávanie ľudí.',
+            {'building_id': building_id, 'dwelling_id': dwelling_id}
+        )
+
+    @staticmethod
+    def update_person(args: dict):
+        """ Change person data """
+        return checked(
+            Business.update_person,
+            'Zlyhala zmena údajov ubytovaného.',
+            {'building_id': building_id, 'dwelling_id': dwelling_id, 'person_id': person_id}
+        )
+
+    @staticmethod
+    def remove_person(args: dict):
+        """ Remove a person from dwelling """
+        # dwellings = get_dwellings_from_args(args)
+        # removed_dwelling = get_dwelling_from_args(args)
+        #
+        # dwellings.remove(removed_dwelling)
 
         return redirect_with_query_params(
             url_for('building_screen', building_id=args['building_id']),

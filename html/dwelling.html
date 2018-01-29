@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="Informačný systém pre na organizáciu ubytovania">
+      <meta name="author" content="Šimon Kocúrek">
+
+      <title>Ubytovací informačný systém</title>
+
+      <link rel="stylesheet" href="{{ url_for('bootstrap_styles') }}">
+      <link rel="stylesheet" href="{{ url_for('style') }}">
+   </head>
+
+   <body class="text-center">
+
+      <div class="container d-flex h-100 p-3 pt-5 mx-auto flex-column">
+
+         <nav class="navbar navbar-expand-md nav-masthead navbar-dark fixed-top blue-background">
+            <a href="javascript:void(0)"><h3 class="masthead-brand">UiS</h3></a>
+
+            <ul class="ml-5 navbar-nav mr-auto">
+               <li class="nav-item active">
+                  <a class="nav-link active" href="{{ url_for('menu') }}">Domov</a>
+               </li>
+
+               <li class="nav-item">
+                  <div class="dropdown">
+                     <a class="nav-item nav-link dropdown-toggle text-light" role="button" data-toggle="dropdown" href="javascript:void(0)">
+                        Súbor
+                     </a>
+                     <div class="dropdown-menu">
+                        <form class="dropdown-item" id="save_form" action="{{ url_for('save_buildings') }}" method="post">
+                           <a class="blue-text" href="javascript:$('#save_form').submit();">Uložiť, ako XML</a>
+                        </form>
+                        <div class="dropdown-divider"></div>
+                        <form class="dropdown-item" id="load_form" action="{{ url_for('load_buildings') }}" method="post">
+                           <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
+                        </form>
+                     </div>
+                  </div>
+               </li>
+
+               <li class="nav-item">
+                  <form id="logout_form" action="{{ url_for('logout') }}" method="post">
+                     <a class="nav-link" href="javascript:$('#logout_form').submit();">Odhlásiť</a>
+                  </form>
+               </li>
+            </ul>
+
+            <form class="form-inline mt-2 mt-md-0" action="{{ url_for('filter_dwellings', building_id=building.id) }}" method="post">
+               <input class="form-control mr-sm-2" type="text" name="filter" placeholder="Hľadať" aria-label="Search" required>
+               <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Hľadať</button>
+            </form>
+         </nav>
+
+         <main class="container my-5">
+            <h1 class="text-left pl-3">
+               <a title="Naspäť"
+                  href="{{ url_for('') }}"
+                  class="blue-text">
+                  <
+               </a>
+               <span>
+               {{ building.street }} {{ building.number }}
+               </span>
+            </h1>
+
+            <div class="card">
+
+            </div>
+
+            <ul class="list-group form-group">
+               <!--{% for dwelling in dwellings %}-->
+               <!--<li class="list-group-item text-left">-->
+               <!--<form id="dwelling_{{ dwelling.id }}"-->
+               <!--action="{{ url_for('update_dwelling', building_id=building.id, dwelling_id=dwelling.id) }}"-->
+               <!--method="post">-->
+
+               <!--<div class="form-row">-->
+               <!--<div class="col">-->
+               <!--<label for="block_{{ dwelling.id }}">Blok budovy:</label>-->
+               <!--<input class="form-control"-->
+               <!--name="block"-->
+               <!--placeholder="B"-->
+               <!--value="{{ dwelling.block }}"-->
+               <!--onblur="$('#dwelling_{{ dwelling.id }}').submit();"-->
+               <!--id="block_{{ dwelling.id }}">-->
+               <!--</div>-->
+
+               <!--<div class="col">-->
+               <!--<label for="floor_{{ building.id }}">Poschodie:</label>-->
+               <!--<input class="form-control"-->
+               <!--name="floor"-->
+               <!--type="number"-->
+               <!--placeholder="1"-->
+               <!--value="{{ dwelling.floor }}"-->
+               <!--onblur="$('#dwelling_{{ dwelling.id }}').submit();"-->
+               <!--id="floor_{{ building.id }}">-->
+               <!--</div>-->
+
+               <!--<div class="col">-->
+               <!--<label for="cell_{{ building.id }}">Bunka izby:</label>-->
+               <!--<input class="form-control"-->
+               <!--name="cell"-->
+               <!--placeholder="25"-->
+               <!--value="{{ dwelling.cell }}"-->
+               <!--onblur="$('#dwelling_{{ dwelling.id }}').submit();"-->
+               <!--id="cell_{{ building.id }}">-->
+               <!--</div>-->
+
+               <!--<div class="col">-->
+               <!--<label for="room_{{ building.id }}">Izba bunky:</label>-->
+               <!--<input class="form-control"-->
+               <!--name="room"-->
+               <!--placeholder="A"-->
+               <!--value="{{ dwelling.room }}"-->
+               <!--onblur="$('#dwelling_{{ dwelling.id }}').submit();"-->
+               <!--id="room_{{ building.id }}">-->
+               <!--</div>-->
+               <!--</div>-->
+               <!--</form>-->
+
+               <!--<div class="row">-->
+               <!--<form action="{{ url_for('dwelling_screen', building_id=building.id, dwelling_id=dwelling.id) }}" method="get">-->
+               <!--<button class="mx-3 mt-3 btn btn-outline-primary">Detail</button>-->
+               <!--</form>-->
+
+               <!--<form action="{{ url_for('delete_dwelling', building_id=building.id, dwelling_id=dwelling.id) }}" method="post">-->
+               <!--<button class="mt-3 btn btn-outline-danger">Zmazať</button>-->
+               <!--</form>-->
+               <!--</div>-->
+
+               <!--</li>-->
+               <!--{% endfor %}-->
+
+               <!--<li class="list-group-item">-->
+               <!--<form id="new_dwelling_form" action="{{ url_for('add_dwelling', building_id=building.id) }}" method="post">-->
+               <!--<button class="btn btn-outline-light blue-background" href="javascript:$('#new_dwelling_form').submit();">+ Pridať izbu</button>-->
+               <!--</form>-->
+               <!--</li>-->
+            </ul>
+         </main>
+
+         <footer class="mastfoot mt-auto">
+            <div class="inner text-muted">
+               <p>Vytvorené pomocou <a class="blue-text" href="https://getbootstrap.com/">Bootstrap</a> frameworku.</p>
+            </div>
+         </footer>
+      </div>
+
+      <script src="{{ url_for('jquery') }}"></script>
+      <script src="{{ url_for('popper') }}"></script>
+      <script src="{{ url_for('bootstrap_javascript') }}"></script>
+   </body>
+</html>
