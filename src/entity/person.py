@@ -7,28 +7,31 @@ class Person:
     """Class holding data about a single accommodated person"""
 
     def __init__(self,
-                 name: str,
-                 code: str,
-                 gender: str,
-                 date_of_birth: datetime,
-                 birthplace: str,
-                 workspace: str,
-                 date_added: datetime = datetime.now(),
-                 identifier: str = None):
+                 name: str = '',
+                 code: str = '',
+                 gender: str = 'm',
+                 date_of_birth: datetime = None,
+                 birthplace: str = '',
+                 workspace: str = '',
+                 date_added: datetime = None,
+                 id: str = None):
         """Basic constructor"""
-        if name is None or len(name) == 0:
-            raise ValueError(f'Person must have a name, but got {name}')
-
         if code is None or len(code) == 0:
-            raise ValueError(f'Person must have a code, but got {code}')
+            code = str(uuid.uuid4())
 
-        if gender is None or len(gender) != 1:
+        if gender not in ['m', 'f']:
             raise ValueError(f'Person must have a one letter gender [m, f], but got {gender}')
 
-        if not identifier or not identifier.strip():
-            identifier = str(uuid.uuid4())
+        if not id or not id.strip():
+            id = str(uuid.uuid4())
 
-        self._id = identifier
+        if not date_of_birth:
+            date_of_birth = datetime.now()
+
+        if not date_added:
+            date_added = datetime.now()
+
+        self._id = id
         self.name = name
         self.code = code
         self.gender = gender
@@ -74,7 +77,10 @@ class Person:
     @gender.setter
     def gender(self, value: str) -> None:
         """Set the person name """
-        self._name = value
+        if value not in ['m', 'f']:
+            raise ValueError(f'Person must have a one letter gender [m, f], but got {value}')
+
+        self._gender = value
 
     @property
     def workspace(self) -> str:
@@ -142,7 +148,7 @@ class Person:
             json['date_of_birth'],
             json['birthplace'],
             json['workspace'],
-            identifier=json['id']
+            id=json['id']
         )
 
     def __lt__(self, other) -> bool:

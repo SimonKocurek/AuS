@@ -73,6 +73,14 @@ def popper():
     return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'popper.min.js')
 
 
+@app.route('/noty.js')
+def noty():
+    """
+    :return: Notty javascript notifications code
+    """
+    return send_from_directory(os.path.join(app.template_folder, 'bootstrap'), 'noty.js')
+
+
 @app.route('/menu.js')
 def menu_javascript():
     """

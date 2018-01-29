@@ -8,6 +8,7 @@ from flask import render_template, redirect
 from src import webapp
 from src.entity.building import Building
 from src.entity.dwelling import Dwelling
+from src.entity.person import Person
 
 
 def get_building_by_id(identifier: str, buildings: [Building]) -> Building:
@@ -25,21 +26,31 @@ def get_building_by_id(identifier: str, buildings: [Building]) -> Building:
 
 
 def get_building_from_args(args: dict) -> Building:
-    """ Extract building from dictionary containing needed identifiers """
+    """ Extract building using a dictionary containing needed identifiers """
     building_id = args['building_id']
     return get_building_by_id(building_id, webapp.buildings)
 
 
 def get_dwellings_from_args(args: dict) -> [Dwelling]:
-    """ Extract dwelling list from dictionary containing needed identifiers """
+    """ Extract dwelling list using a dictionary containing needed identifiers """
     return get_building_from_args(args).dwellings
 
 
 def get_dwelling_from_args(args: dict) -> Dwelling:
-    """ Extract dwelling list from dictionary containing needed identifiers """
+    """ Extract dwelling list using a dictionary containing needed identifiers """
     for dwelling in get_building_from_args(args).dwellings:
         if dwelling.id == args['dwelling_id']:
             return dwelling
+
+    raise IndexError
+
+
+def get_person_from_args(args: dict) -> Person:
+    """ Extract person using a dictionary containing needed identifiers """
+    dwelling = get_building_from_args(args)
+    for person in dwelling.people:
+        if person.id == args['person_id']:
+            return person
 
     raise IndexError
 
