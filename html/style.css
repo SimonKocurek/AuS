@@ -57,6 +57,7 @@ body {
 
 .blue-text:focus, .blue-text:hover {
     color: #38a8e1;
+    text-decoration: none;
 }
 
 .highlight-text {

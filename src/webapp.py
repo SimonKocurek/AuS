@@ -4,12 +4,14 @@ import sys
 import traceback
 
 from flask import Flask, render_template, send_from_directory
+from flask_jsglue import JSGlue
 
 from src.business import Business
 from src.entity.building import Building
 from src.utilities import checked
 
 app = Flask(__name__, template_folder='../html')
+jsglue = JSGlue(app)
 
 buildings: [Building] = []
 user_code: str = ''
@@ -72,7 +74,7 @@ def popper():
 
 
 @app.route('/menu.js')
-def menu_script():
+def menu_javascript():
     """
     :return: Menu javascript code
     """
@@ -80,7 +82,7 @@ def menu_script():
 
 
 @app.route('/building.js')
-def building_script():
+def building_javascript():
     """
     :return: Building javascript code
     """
@@ -88,7 +90,7 @@ def building_script():
 
 
 @app.route('/dwelling.js')
-def dwelling_script():
+def dwelling_javascript():
     """
     :return: Dwelling javascript code
     """
@@ -166,7 +168,7 @@ def delete_building(building_id: str):
 @app.route('/menu/budova/<building_id>/update', methods=['POST'])
 def update_building(building_id: str):
     """ Change building details """
-    return checked(Business.update_buildings, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
+    return checked(Business.update_building, 'Zlyhala zmena údajov budovy.', {'building_id': building_id})
 
 
 ###############

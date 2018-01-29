@@ -2,3 +2,4 @@ dict2xml==1.5
 xmltodict==0.11.0
 flask==0.12.2
 easygui==0.98.1
+Flask-JSGlue==0.3.1

@@ -98,7 +98,7 @@ class Business:
     @staticmethod
     def add_building():
         """ Add new building """
-        webapp.buildings.append(Building('', 0))
+        webapp.buildings.insert(0, Building('', 0))
         return redirect_with_query_params(url_for('menu'), filter=webapp.filter, triedenie=webapp.sort_type)
 
     @staticmethod
@@ -110,7 +110,7 @@ class Business:
         return redirect_with_query_params(url_for('menu'), filter=webapp.filter, triedenie=webapp.sort_type)
 
     @staticmethod
-    def update_buildings(args: dict):
+    def update_building(args: dict):
         """ Change building details """
         building = get_building_from_args(args)
 

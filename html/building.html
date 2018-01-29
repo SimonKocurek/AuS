@@ -96,10 +96,16 @@
             </div>
 
             <ul class="list-group form-group">
+               <li class="list-group-item text-right p-1">
+                  <form id="new_dwelling_form" action="{{ url_for('add_dwelling', building_id=building.id) }}" method="post">
+                     <button class="btn btn-outline-light blue-background" href="javascript:$('#new_dwelling_form').submit();">+ Pridať izbu</button>
+                  </form>
+               </li>
+
                {% for dwelling in dwellings %}
                <li class="list-group-item text-left">
                   <div class="form-row pb-1 highlight-text">
-                     <div class="col-3 px-1">
+                     <div class="px-1">
                         <span>
                            Voľných Miest:
                         </span>
@@ -107,7 +113,7 @@
                            {{ dwelling.free_spaces() }}
                         </span>
                      </div>
-                     <div class="col-3 px-1">
+                     <div class="px-1">
                         <span>
                            Ubytovaných:
                         </span>
@@ -127,7 +133,7 @@
                            <input class="form-control"
                                   name="block"
                                   value="{{ dwelling.block }}"
-                                  onblur="$('#dwelling_{{ dwelling.id }}').submit();"
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
                                   id="block_{{ dwelling.id }}">
                         </div>
 
@@ -137,7 +143,7 @@
                                   name="floor"
                                   type="number"
                                   value="{{ dwelling.floor }}"
-                                  onblur="$('#dwelling_{{ dwelling.id }}').submit();"
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
                                   id="floor_{{ building.id }}">
                         </div>
 
@@ -146,7 +152,7 @@
                            <input class="form-control"
                                   name="cell"
                                   value="{{ dwelling.cell }}"
-                                  onblur="$('#dwelling_{{ dwelling.id }}').submit();"
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
                                   id="cell_{{ building.id }}">
                         </div>
 
@@ -155,7 +161,7 @@
                            <input class="form-control"
                                   name="room"
                                   value="{{ dwelling.room }}"
-                                  onblur="$('#dwelling_{{ dwelling.id }}').submit();"
+                                  onblur="updateDwelling('#dwelling_{{ dwelling.id }}', '{{ building.id }}', '{{ dwelling.id }}');"
                                   id="room_{{ building.id }}">
                         </div>
                      </div>
@@ -173,12 +179,6 @@
 
                </li>
                {% endfor %}
-
-               <li class="list-group-item">
-                  <form id="new_dwelling_form" action="{{ url_for('add_dwelling', building_id=building.id) }}" method="post">
-                     <button class="btn btn-outline-light blue-background" href="javascript:$('#new_dwelling_form').submit();">+ Pridať izbu</button>
-                  </form>
-               </li>
             </ul>
          </main>
 
@@ -189,8 +189,10 @@
          </footer>
       </div>
 
-      <script src="{{ url_for('jquery') }}"></script>
-      <script src="{{ url_for('popper') }}"></script>
-      <script src="{{ url_for('bootstrap_javascript') }}"></script>
+      {{ JSGlue.include() }}
+      <script type="text/javascript" src="{{ url_for('jquery') }}"></script>
+      <script type="text/javascript" src="{{ url_for('popper') }}"></script>
+      <script type="text/javascript" src="{{ url_for('bootstrap_javascript') }}"></script>
+      <script type="text/javascript" src="{{ url_for('building_javascript') }}"></script>
    </body>
 </html>
