@@ -5,7 +5,7 @@ Information system that helps you store and navigate in your hotel, or dorm infr
 UiS lets you easily add new buildings, rooms and people into the system using an intuitive
 web UI.
 
-![](header.png)
+![](demo.gif)
 
 ## Installation
 
