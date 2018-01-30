@@ -28,6 +28,9 @@ class Person:
         if not date_added:
             date_added = datetime.now()
 
+        if not isinstance(date_of_birth, str):
+            date_of_birth = date_of_birth.strftime('%Y-%m-%d')
+
         self._id = id
         self.name = name
         self.code = code
@@ -90,14 +93,14 @@ class Person:
         self._workspace = value
 
     @property
-    def date_of_birth(self) -> datetime:
+    def date_of_birth(self) -> str:
         """Get the person date of birth """
-        return self._date_of_birth
+        return self._date_of_birth.strftime('%Y-%m-%d')
 
     @date_of_birth.setter
-    def date_of_birth(self, value: datetime) -> None:
+    def date_of_birth(self, value: str) -> None:
         """Set the person date of birth """
-        self._date_of_birth = value
+        self._date_of_birth = datetime.strptime(value, '%Y-%m-%d')
 
     @property
     def birthplace(self) -> str:
@@ -110,9 +113,9 @@ class Person:
         self._birthplace = value
 
     @property
-    def date_added(self) -> datetime:
+    def date_added(self) -> str:
         """Get the person added date"""
-        return self._date_added
+        return self._date_added.strftime('%Y-%m-%d')
 
     @date_added.setter
     def date_added(self, value: datetime) -> None:

@@ -256,9 +256,11 @@ class Business:
         date_of_birth = request.form.get('date_of_birth', default=person.date_of_birth, type=str)
         workspace = request.form.get('workspace', default=person.workspace, type=str)
 
+        gender_mapper = {'Muž': 'm', 'Žena': 'z'}
+
         person.name = non_numeric(name)
         person.code = code
-        person.gender = gender
+        person.gender = gender_mapper[gender]
         person.birthplace = birthplace
         person.date_of_birth = date_of_birth
         person.workspace = workspace

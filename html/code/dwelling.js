@@ -89,24 +89,13 @@ function addPerson(buildingId, dwellingId, peopleInDwelling) {
 function updatePerson(personForm, buildingId, dwellingId, personId) {
     var name = $('#name_' + personId)[0].value;
     var code = $('#code_' + personId)[0].value;
-    var gender = $('#gender_' + personId)[0].value;
-    var workspace = $('#workspace_' + personId)[0].value;
-    var date = $('#date_of_birth_' + personId)[0].value;
-    var birthplace = $('#birthplace_' + personId)[0].value;
 
-    // if (!blockId.match(/[A-Z]/)) {
-    //     noty({
-    //         text: 'Názov bloku musí byť 1 neprázdny veľký znak [A-Z].'
-    //     });
-    //     return;
-    // }
-    //
-    // if (!cellId.match(/\S+/)) {
-    //     noty({
-    //         text: 'ID bunky musí byť 1 neprázdny znak.'
-    //     });
-    //     return;
-    // }
+    if (!name || !code) {
+        noty({
+            text: 'Osoba musí obsahovať neprázdne meno a kód.'
+        });
+        return;
+    }
 
     $.ajax({
         url: Flask.url_for('update_person', {building_id: buildingId, dwelling_id: dwellingId, person_id: personId}),

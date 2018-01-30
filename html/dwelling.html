@@ -83,9 +83,10 @@
                </div>
 
                <form id="dwelling_{{ dwelling.id }}"
-                     class="row px-3 pb-3">
+                     class="row px-3 pb-3 highlight-text">
 
-                  <label for="space_{{ dwelling.id }}">Priestor:</label>
+                  <label for="space_{{ dwelling.id }}"
+                         class="pl-1 pr-2 pt-2">Priestor:</label>
                   <input class="form-control col-4"
                          name="space"
                          type="number"
@@ -96,7 +97,7 @@
 
             </div>
 
-            <h2 class="text-left pl-3">
+            <h2 class="text-left pl-3 pt-3">
                Ubytovaní
             </h2>
 
@@ -110,12 +111,15 @@
                {% for person in dwelling.people %}
                <li class="list-group-item text-left">
                   <form id="person_{{ person.id }}">
-                     Pridany: {{ person.date_added }}
+                     <div class="text-muted pb-1">
+                        Pridaný: {{ person.date_added }}
+                     </div>
 
                      <div class="form-row">
                         <div class="col">
                            <label for="name_{{ person.id }}">Meno:</label>
                            <input class="form-control"
+                                  type="text"
                                   name="name"
                                   value="{{ person.name }}"
                                   onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
@@ -124,6 +128,7 @@
                         <div class="col">
                            <label for="code_{{ person.id }}">Kód:</label>
                            <input class="form-control"
+                                  type="text"
                                   name="code"
                                   value="{{ person.code }}"
                                   onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
@@ -131,19 +136,23 @@
                         </div>
                      </div>
 
-                     <div class="form-row">
+                     <div class="form-row pt-1">
                         <div class="col">
                            <label for="gender_{{ person.id }}">Pohlavie:</label>
-                           <input class="form-control"
-                                  name="gender"
-                                  value="{{ person.gender }}"
-                                  onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
-                                  id="gender_{{ person.id }}">
+                           <select class="form-control"
+                                   name="gender"
+                                   value="{{ person.gender }}"
+                                   onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
+                                   id="gender_{{ person.id }}">
+                              <option>Muž</option>
+                              <option>Žena</option>
+                           </select>
                         </div>
                         <div class="col">
                            <label for="workspace_{{ person.id }}">Pracovisko:</label>
                            <input class="form-control"
                                   name="workspace"
+                                  type="text"
                                   value="{{ person.workspace }}"
                                   onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
                                   id="workspace_{{ person.id }}">
@@ -152,6 +161,7 @@
                            <label for="date_of_birth_{{ person.id }}">Dátum narodenia:</label>
                            <input class="form-control"
                                   name="date_of_birth"
+                                  type="date"
                                   value="{{ person.date_of_birth }}"
                                   onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
                                   id="date_of_birth_{{ person.id }}">
@@ -160,6 +170,7 @@
                            <label for="birthplace_{{ person.id }}">Pôvod:</label>
                            <input class="form-control"
                                   name="birthplace"
+                                  type="text"
                                   value="{{ person.birthplace }}"
                                   onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
                                   id="birthplace_{{ person.id }}">
@@ -167,7 +178,7 @@
                      </div>
                   </form>
 
-                  <div class="row">
+                  <div class="form-row px-1">
                      <form action="javascript:deletePerson('{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')">
                         <button class="mt-3 btn btn-outline-danger" type="submit">Zmazať</button>
                      </form>
