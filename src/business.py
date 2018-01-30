@@ -198,22 +198,30 @@ class Business:
         floor = request.form.get('floor', default=dwelling.floor, type=int)
         cell = request.form.get('cell', default=dwelling.cell, type=str)
         room = request.form.get('room', default=dwelling.room, type=str)
-        space = request.form.get('space', default=dwelling.space, type=int)
-
-        if space < len(dwelling.people):
-            return
-
         dwelling.block = non_numeric(block).upper()
+
         dwelling.floor = floor
         dwelling.cell = cell
         dwelling.room = room
-        dwelling.space = positive(space)
 
         return redirect_with_query_params(
             url_for('building_screen', building_id=args['building_id']),
             filter=webapp.filter,
             triedenie=webapp.sort_type
         )
+
+    @staticmethod
+    def update_dwelling_info(args: dict):
+        """ Change dwelling details """
+        dwelling = get_dwelling_from_args(args)
+
+        space = request.form.get('space', default=dwelling.space, type=int)
+
+        if space < len(dwelling.people):
+            return
+
+        dwelling.space = positive(space)
+        return Business.dwelling_screen(args)
 
     @staticmethod
     def delete_dwelling(args: dict):
@@ -256,11 +264,9 @@ class Business:
         date_of_birth = request.form.get('date_of_birth', default=person.date_of_birth, type=str)
         workspace = request.form.get('workspace', default=person.workspace, type=str)
 
-        gender_mapper = {'Muž': 'm', 'Žena': 'z'}
-
         person.name = non_numeric(name)
         person.code = code
-        person.gender = gender_mapper[gender]
+        person.gender = gender
         person.birthplace = birthplace
         person.date_of_birth = date_of_birth
         person.workspace = workspace

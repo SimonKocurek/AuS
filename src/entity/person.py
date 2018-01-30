@@ -9,16 +9,13 @@ class Person:
     def __init__(self,
                  name: str = '',
                  code: str = '',
-                 gender: str = 'm',
+                 gender: str = 'Muž',
                  date_of_birth: datetime = None,
                  birthplace: str = '',
                  workspace: str = '',
                  date_added: datetime = None,
                  id: str = None):
         """Basic constructor"""
-        if gender not in ['m', 'f']:
-            raise ValueError(f'Person must have a one letter gender [m, f], but got {gender}')
-
         if id is None or len(id.strip()) == 0:
             id = str(uuid.uuid4())
 
@@ -72,15 +69,19 @@ class Person:
     @property
     def gender(self) -> str:
         """Get the person name """
-        return self._gender
+        gender_mapper = {'m': 'Muž', 'z': 'Žena'}
+        return gender_mapper[self._gender]
 
     @gender.setter
     def gender(self, value: str) -> None:
         """Set the person name """
-        if value not in ['m', 'f']:
-            raise ValueError(f'Person must have a one letter gender [m, f], but got {value}')
-
-        self._gender = value
+        gender_mapper = {
+            'Muž': 'm',
+            'm': 'm',
+            'Žena': 'z',
+            'z': 'z'
+        }
+        self._gender = gender_mapper[value]
 
     @property
     def workspace(self) -> str:

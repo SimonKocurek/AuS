@@ -144,8 +144,15 @@
                                    value="{{ person.gender }}"
                                    onblur="updatePerson('#person_{{ person.id }}', '{{ building.id }}', '{{ dwelling.id }}', '{{ person.id }}')"
                                    id="gender_{{ person.id }}">
+                              {% if person.gender == 'Muž' %}
                               <option>Muž</option>
                               <option>Žena</option>
+                              {% endif %}
+
+                              {% if person.gender == 'Žena' %}
+                              <option>Žena</option>
+                              <option>Muž</option>
+                              {% endif %}
                            </select>
                         </div>
                         <div class="col">

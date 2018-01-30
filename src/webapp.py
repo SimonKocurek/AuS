@@ -223,6 +223,12 @@ def update_dwelling(building_id: str, dwelling_id: str):
     return checked(Business.update_dwelling, 'Zlyhala zmena údajov izby.', {'building_id': building_id, 'dwelling_id': dwelling_id})
 
 
+@app.route('/menu/budova/<building_id>/<dwelling_id>/update_info', methods=['POST'])
+def update_dwelling_info(building_id: str, dwelling_id: str):
+    """ Change dwelling details """
+    return checked(Business.update_dwelling_info, 'Zlyhala zmena údajov izby.', {'building_id': building_id, 'dwelling_id': dwelling_id})
+
+
 #################
 # Dwelling Screen
 #################
