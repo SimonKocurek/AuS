@@ -259,10 +259,10 @@ def update_person(building_id: str, dwelling_id: str, person_id: str):
 
 
 @app.route('/menu/budova/<building_id>/izba/<dwelling_id>/clovek/<person_id>/vyhod_cloveka', methods=['POST'])
-def remove_person(building_id: str, dwelling_id: str, person_id: str):
+def delete_person(building_id: str, dwelling_id: str, person_id: str):
     """ Remove a person from dwelling """
     return checked(
-        Business.remove_person,
+        Business.delete_person,
         'Zlyhalo mazanie ubytovaného.',
         {'building_id': building_id, 'dwelling_id': dwelling_id, 'person_id': person_id}
     )

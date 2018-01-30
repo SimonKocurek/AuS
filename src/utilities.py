@@ -47,7 +47,7 @@ def get_dwelling_from_args(args: dict) -> Dwelling:
 
 def get_person_from_args(args: dict) -> Person:
     """ Extract person using a dictionary containing needed identifiers """
-    dwelling = get_building_from_args(args)
+    dwelling = get_dwelling_from_args(args)
     for person in dwelling.people:
         if person.id == args['person_id']:
             return person

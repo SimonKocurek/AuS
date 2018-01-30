@@ -34,8 +34,8 @@
                            <a class="blue-text" href="javascript:saveXml();">Uložiť, ako XML</a>
                         </form>
                         <div class="dropdown-divider"></div>
-                        <form class="dropdown-item" id="load_form">
-                           <a class="blue-text" href="javascript:loadXml()">Načítať, XML</a>
+                        <form class="dropdown-item" id="load_form" action="{{ url_for('load_buildings') }}" method="post">
+                           <a class="blue-text" href="javascript:$('#load_form').submit();">Načítať, XML</a>
                         </form>
                      </div>
                   </div>

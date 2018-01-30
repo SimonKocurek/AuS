@@ -1,13 +1,3 @@
-$.ajax({
-    url: Flask.url_for('load_buildings', {'building_id': buildingId}),
-    type: 'post',
-    data: $('#myForm').serialize(),
-    success: function () {
-        alert("worked");
-    }
-});
-
-
 $(document).ready(function () {
     $.noty.defaults = {
         layout: 'topRight',
@@ -70,96 +60,90 @@ function saveXml() {
     });
 }
 
-function loadXml() {
-    $.ajax({
-        url: Flask.url_for('load_buildings'),
-        type: 'post',
-        dataType: 'html',
-        success: function (response) {
-            $('.dropdown-toggle').dropdown('toggle');
-            replaceBuildingList(response)
-        },
-        error: function (error) {
-            $('.dropdown-toggle').dropdown('toggle');
+function addPerson(buildingId, dwellingId, peopleInDwelling) {
+    var space = $('#space_' + dwellingId)[0].value;
 
-            noty({
-                text: 'Zlyhalo načítavanie XML súboru.'
-            });
-        }
-    });
-}
-
-function filterBuildings() {
-    $.ajax({
-        url: Flask.url_for('filter_buildings'),
-        type: 'post',
-        dataType: 'html',
-        data: $('#filter_form').serialize(),
-        success: function (response) {
-            replaceBuildingList(response)
-        },
-        error: function (error) {
-            noty({
-                text: 'Zlyhalo filtrovanie budov.'
-            });
-        }
-    });
-}
-
-function sortBuildings(sortForm) {
-    $.ajax({
-        url: Flask.url_for('sort_buildings'),
-        type: 'post',
-        dataType: 'html',
-        data: $(sortForm).serialize(),
-        success: function (response) {
-            replaceBuildingList(response)
-        },
-        error: function (error) {
-            alert('Zlyhalo triedenie budov.')
-        }
-    });
-}
-
-function addBuilding() {
-    $.ajax({
-        url: Flask.url_for('add_building'),
-        type: 'post',
-        dataType: 'html',
-        success: function (response) {
-            replaceBuildingList(response)
-        },
-        error: function (error) {
-            noty({
-                text: 'Zlyhalo pridavanie budovy.'
-            });
-        }
-    });
-}
-
-function updateBuilding(buildingForm, buildingId) {
-    var streetName = $('#street_' + buildingId)[0].value;
-    var streetNumber = $('#number_' + buildingId)[0].value;
-
-    if (!streetName.match(/^\D+$/)) {
+    if (space === peopleInDwelling) {
         noty({
-            text: 'Názov ulice musí byť neprázdny a nesmie obsahovať čísla.'
-        });
-        return;
-    }
-
-
-    if (streetNumber < 0) {
-        noty({
-            text: 'Číslo ulice nemože byť záporné.'
+            text: 'Izba potrebuje viac miesta.'
         });
         return;
     }
 
     $.ajax({
-        url: Flask.url_for('update_building', {'building_id': buildingId}),
+        url: Flask.url_for('add_person', {building_id: buildingId, dwelling_id: dwellingId}),
         type: 'post',
-        data: $(buildingForm).serialize(),
+        dataType: 'html',
+        success: function (response) {
+            replacePeopleList(response);
+            replaceInfo(response);
+        },
+        error: function (error) {
+            noty({
+                text: 'Zlyhalo pridavanie ubytovaného.'
+            });
+        }
+    });
+}
+
+function updatePerson(personForm, buildingId, dwellingId, personId) {
+    var name = $('#name_' + personId)[0].value;
+    var code = $('#code_' + personId)[0].value;
+    var gender = $('#gender_' + personId)[0].value;
+    var workspace = $('#workspace_' + personId)[0].value;
+    var date = $('#date_of_birth_' + personId)[0].value;
+    var birthplace = $('#birthplace_' + personId)[0].value;
+
+    // if (!blockId.match(/[A-Z]/)) {
+    //     noty({
+    //         text: 'Názov bloku musí byť 1 neprázdny veľký znak [A-Z].'
+    //     });
+    //     return;
+    // }
+    //
+    // if (!cellId.match(/\S+/)) {
+    //     noty({
+    //         text: 'ID bunky musí byť 1 neprázdny znak.'
+    //     });
+    //     return;
+    // }
+
+    $.ajax({
+        url: Flask.url_for('update_person', {building_id: buildingId, dwelling_id: dwellingId, person_id: personId}),
+        type: 'post',
+        data: $(personForm).serialize(),
+        error: function (error) {
+            noty({
+                text: 'Zlyhalo updatovanie ubytovaného.'
+            });
+        }
+    });
+
+}
+
+function updateDwelling(dwellingForm, buildingId, dwellingId, peopleInDwelling) {
+    var space = $('#space_' + dwellingId)[0].value;
+
+    if (space <= 0) {
+        noty({
+            text: 'Izba musí byť schopná ubytovať aspoň jednu osobu.'
+        });
+        return;
+    }
+
+    if (space < peopleInDwelling) {
+        noty({
+            text: 'V izbe je viac ľudí, ako navrhnutého priestoru.'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: Flask.url_for('update_dwelling', {building_id: buildingId, dwelling_id: dwellingId}),
+        type: 'post',
+        data: $(dwellingForm).serialize(),
+        success: function (response) {
+        },
         error: function (error) {
             noty({
                 text: 'Zlyhalo updatovanie budovy.'
@@ -169,23 +153,29 @@ function updateBuilding(buildingForm, buildingId) {
 
 }
 
-function deleteBuilding(buildingId) {
+function deletePerson(buildingId, dwellingId, personId) {
     $.ajax({
-        url: Flask.url_for('delete_building', {building_id: buildingId}),
+        url: Flask.url_for('delete_person', {building_id: buildingId, dwelling_id: dwellingId, person_id: personId}),
         type: 'post',
         dataType: 'html',
         success: function (response) {
-            replaceBuildingList(response)
+            replacePeopleList(response);
+            replaceInfo(response);
         },
         error: function (error) {
             noty({
-                text: 'Zlyhalo mazanie budovy.'
+                text: 'Zlyhalo mazanie ubytovaného.'
             });
         }
     });
 }
 
-function replaceBuildingList(html) {
-    var new_building_list = $(html).find('#building_list');
-    $('#building_list').replaceWith(new_building_list);
+function replacePeopleList(html) {
+    var newPersonList = $(html).find('#person_list');
+    $('#person_list').replaceWith(newPersonList);
+}
+
+function replaceInfo(html) {
+    var newDwellingInfo = $(html).find('#dwelling_info');
+    $('#dwelling_info').replaceWith(newDwellingInfo);
 }

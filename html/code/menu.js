@@ -60,25 +60,6 @@ function saveXml() {
     });
 }
 
-function loadXml() {
-    $.ajax({
-        url: Flask.url_for('load_buildings'),
-        type: 'post',
-        dataType: 'html',
-        success: function (response) {
-            $('.dropdown-toggle').dropdown('toggle');
-            replaceBuildingList(response)
-        },
-        error: function (error) {
-            $('.dropdown-toggle').dropdown('toggle');
-
-            noty({
-                text: 'Zlyhalo načítavanie XML súboru.'
-            });
-        }
-    });
-}
-
 function filterBuildings() {
     $.ajax({
         url: Flask.url_for('filter_buildings'),
@@ -147,7 +128,7 @@ function updateBuilding(buildingForm, buildingId) {
     }
 
     $.ajax({
-        url: Flask.url_for('update_building', {'building_id': buildingId}),
+        url: Flask.url_for('update_building', {building_id: buildingId}),
         type: 'post',
         data: $(buildingForm).serialize(),
         error: function (error) {

@@ -16,9 +16,6 @@ class Person:
                  date_added: datetime = None,
                  id: str = None):
         """Basic constructor"""
-        if code is None or len(code) == 0:
-            code = str(uuid.uuid4())
-
         if gender not in ['m', 'f']:
             raise ValueError(f'Person must have a one letter gender [m, f], but got {gender}')
 

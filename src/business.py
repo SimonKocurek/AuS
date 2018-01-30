@@ -74,7 +74,10 @@ class Business:
         if loaded_buildings:
             webapp.buildings = loaded_buildings
 
-        return Business.menu()
+        webapp.sort_type = ''
+        webapp.filter = ''
+
+        return redirect_with_query_params(url_for('menu'))
 
     @staticmethod
     def save_buildings():
@@ -125,8 +128,8 @@ class Business:
         """ Change building details """
         building = get_building_from_args(args)
 
-        street = request.form.get('street', default='', type=str)
-        number = request.form.get('number', default=0, type=int)
+        street = request.form.get('street', default=building.street, type=str)
+        number = request.form.get('number', default=building.number, type=int)
 
         building.street = street
         building.number = non_negative(number)
@@ -191,11 +194,14 @@ class Business:
         """ Change dwelling details """
         dwelling = get_dwelling_from_args(args)
 
-        block = request.form.get('block', default='', type=str)
-        floor = request.form.get('floor', default=0, type=int)
-        cell = request.form.get('cell', default='', type=str)
-        room = request.form.get('room', default='', type=str)
-        space = request.form.get('space', default=1, type=int)
+        block = request.form.get('block', default=dwelling.block, type=str)
+        floor = request.form.get('floor', default=dwelling.floor, type=int)
+        cell = request.form.get('cell', default=dwelling.cell, type=str)
+        room = request.form.get('room', default=dwelling.room, type=str)
+        space = request.form.get('space', default=dwelling.space, type=int)
+
+        if space < len(dwelling.people):
+            return
 
         dwelling.block = non_numeric(block).upper()
         dwelling.floor = floor
@@ -233,22 +239,22 @@ class Business:
         dwelling = get_dwelling_from_args(args)
 
         if dwelling.free_spaces() == 0:
-            return redirect_with_query_params(url_for('dwelling_screen', building_id=args['building_id'], dwelling_id=args['dwelling_id']))
+            return
 
         dwelling.add_person(Person())
-        return redirect_with_query_params(url_for('dwelling_screen', building_id=args['building_id'], dwelling_id=args['dwelling_id']))
+        return Business.dwelling_screen(args)
 
     @staticmethod
     def update_person(args: dict):
         """ Change person data """
         person = get_person_from_args(args)
 
-        name = request.form.get('name', default='', type=str)
-        code = request.form.get('code', default='', type=str)
-        gender = request.form.get('gender', default='m', type=str)
-        birthplace = request.form.get('birthplace', default='', type=str)
-        date_of_birth = request.form.get('date_of_birth', default='', type=str)
-        workspace = request.form.get('workspace', default='', type=str)
+        name = request.form.get('name', default=person.name, type=str)
+        code = request.form.get('code', default=person.code, type=str)
+        gender = request.form.get('gender', default=person.gender, type=str)
+        birthplace = request.form.get('birthplace', default=person.birthplace, type=str)
+        date_of_birth = request.form.get('date_of_birth', default=person.date_of_birth, type=str)
+        workspace = request.form.get('workspace', default=person.workspace, type=str)
 
         person.name = non_numeric(name)
         person.code = code
@@ -260,11 +266,10 @@ class Business:
         return redirect_with_query_params(url_for('dwelling_screen', building_id=args['building_id'], dwelling_id=args['dwelling_id']))
 
     @staticmethod
-    def remove_person(args: dict):
+    def delete_person(args: dict):
         """ Remove a person from dwelling """
         dwelling = get_dwelling_from_args(args)
         person = get_person_from_args(args)
 
         dwelling.remove_person(person)
-
-        return redirect_with_query_params(url_for('dwelling_screen', building_id=args['building_id'], dwelling_id=args['dwelling_id']))
+        return Business.dwelling_screen(args)
